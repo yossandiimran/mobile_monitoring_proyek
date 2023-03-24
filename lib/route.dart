@@ -12,6 +12,14 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ChangePass());
       case '/home':
         return MaterialPageRoute(builder: (_) => Home());
+      case '/mainPenerimaan':
+        return MaterialPageRoute(builder: (_) => MainPenerimaan());
+      case '/inputPenerimaan':
+        return MaterialPageRoute(builder: (_) => InputPenerimaan(objParam: settings.arguments));
+      case '/historyPenerimaan':
+        return MaterialPageRoute(builder: (_) => HistoryPenerimaan(objParam: settings.arguments));
+      case '/laporanPenerimaan':
+        return MaterialPageRoute(builder: (_) => LaporanPenerimaan());
 
       default:
         return _errorRoute();

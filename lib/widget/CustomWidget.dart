@@ -5,7 +5,7 @@ part of '../header.dart';
 class CustomWidget {
   radiusVal(radius) => Radius.circular(radius);
 
-  appBarTitle(context, title, color) {
+  appBarTitle({required context, required title, required color, isCenter = true, List<Widget>? action}) {
     return AppBar(
       backgroundColor: color,
       elevation: 0,
@@ -13,14 +13,16 @@ class CustomWidget {
         onPressed: () => Navigator.pop(context),
         icon: Icon(Icons.arrow_back_ios_new_rounded, color: defWhite),
       ),
+      centerTitle: isCenter,
       title: Text(
         title,
         style: textStyling.styleText5(global.getWidth(context) / 25, defWhite),
       ),
+      actions: action,
     );
   }
 
-  bgAppbar(context) {
+  bgAppbar({required context}) {
     return Positioned(
       top: 0,
       bottom: 0,
@@ -36,7 +38,7 @@ class CustomWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [defPurple, defPurple2, defPurple2],
+                colors: [defGreen, defGreen, defGreen],
               ),
             ),
           ),
@@ -96,12 +98,7 @@ class CustomWidget {
         if (routeName == 'back') {
           Navigator.pop(context);
         } else {
-          global.navigateCheckPermission(
-            context: context,
-            route: "/produksiPage",
-            menuCode: menuCode,
-          );
-          // Navigator.pushNamed(context, routeName);
+          global.navigateCheckPermission(context: context, route: routeName, menuCode: menuCode);
         }
       },
       child: Container(
@@ -393,99 +390,18 @@ class CustomWidget {
 
   getItemsDropdown(selection, data) {
     List<DropdownMenuItem<String>> widget = [];
-    if (selection == "server") {
-      widget.add(DropdownMenuItem(value: "0", child: Text("Server", style: textStyling.styleText4(13))));
+    if (selection == "plant") {
+      widget.add(DropdownMenuItem(value: "0", child: Text("Plant / Lokasi", style: textStyling.styleText4(13))));
       if (data != null) {
         for (var i = 0; i < data.length; i++) {
           widget.add(
             DropdownMenuItem(
               value: (i + 1).toString(),
-              child: Text(data[i]["description"], style: textStyling.styleText4(13)),
+              child: Text(data[i]["PLANT"], style: textStyling.styleText4(13)),
             ),
           );
         }
       }
-    } else if (selection == "jenisVendor") {
-      widget.add(DropdownMenuItem(value: "0", child: Text("Jenis Vendor", style: textStyling.styleText4(13))));
-      if (data != null) {
-        for (var i = 0; i < data.length; i++) {
-          widget.add(
-            DropdownMenuItem(
-              value: (i + 1).toString(),
-              child: Text(data[i]["jenis_vendor"], style: textStyling.styleText4(13)),
-            ),
-          );
-        }
-      }
-    } else if (selection == "compCode") {
-      widget.add(DropdownMenuItem(value: "0", child: Text("Company Code", style: textStyling.styleText4(13))));
-      if (data != null) {
-        for (var i = 0; i < data.length; i++) {
-          widget.add(
-            DropdownMenuItem(
-              value: (i + 1).toString(),
-              child: Text(data[i]["deskripsi"], style: textStyling.styleText4(13)),
-            ),
-          );
-        }
-      }
-    } else if (selection == "purchOrg") {
-      widget.add(DropdownMenuItem(value: "0", child: Text("Purch Org", style: textStyling.styleText4(13))));
-      if (data != null) {
-        for (var i = 0; i < data.length; i++) {
-          widget.add(
-            DropdownMenuItem(
-              value: (i + 1).toString(),
-              child: Text(data[i]["deskripsi"], style: textStyling.styleText4(13)),
-            ),
-          );
-        }
-      }
-    } else if (selection == "kodeNegara") {
-      widget.add(DropdownMenuItem(value: "0", child: Text("Kode Negara", style: textStyling.styleText4(13))));
-      if (data != null) {
-        for (var i = 0; i < data.length; i++) {
-          widget.add(
-            DropdownMenuItem(
-              value: (i + 1).toString(),
-              child: Text(data[i]["name"], style: textStyling.styleText4(13)),
-            ),
-          );
-        }
-      }
-    } else if (selection == "kodeBank") {
-      widget.add(DropdownMenuItem(value: "0", child: Text("Kode Bank", style: textStyling.styleText4(13))));
-      if (data != null) {
-        for (var i = 0; i < data.length; i++) {
-          widget.add(
-            DropdownMenuItem(
-              value: (i + 1).toString(),
-              child: Text(data[i]["deskripsi"], style: textStyling.styleText4(13)),
-            ),
-          );
-        }
-      }
-    } else if (selection == "lamaPembayaran") {
-      widget.add(DropdownMenuItem(value: "0", child: Text("Lama Pembyayaran", style: textStyling.styleText4(13))));
-      if (data != null) {
-        for (var i = 0; i < data.length; i++) {
-          widget.add(
-            DropdownMenuItem(
-              value: (i + 1).toString(),
-              child: Text(data[i]["deskripsi"], style: textStyling.styleText4(13)),
-            ),
-          );
-        }
-      }
-    } else if (selection == "mataUang") {
-      widget.add(DropdownMenuItem(value: "0", child: Text("Mata Uang", style: textStyling.styleText4(13))));
-      widget.add(DropdownMenuItem(value: "USD", child: Text("USD - US Dollar", style: textStyling.styleText4(13))));
-      widget.add(DropdownMenuItem(value: "RP", child: Text("Rp - IDR Rupiah", style: textStyling.styleText4(13))));
-      widget.add(DropdownMenuItem(value: "YEN", child: Text("¥ - Yen Japan", style: textStyling.styleText4(13))));
-      widget.add(DropdownMenuItem(value: "YUAN", child: Text("YUAN - Yuan China", style: textStyling.styleText4(13))));
-      widget.add(
-        DropdownMenuItem(value: "MYR", child: Text("MYR - Malaysia Ringgit", style: textStyling.styleText4(13))),
-      );
     }
     return widget;
   }

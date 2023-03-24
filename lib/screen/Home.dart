@@ -11,9 +11,19 @@ class HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    getLocation();
     // fbmessaging.initFirebase(
     //   context: context,
     // );
+  }
+
+  getLocation() async {
+    await Geolocator.isLocationServiceEnabled();
+    await Geolocator.checkPermission();
+    await Geolocator.requestPermission();
+    await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
   }
 
   @override
@@ -63,9 +73,6 @@ class HomeState extends State<Home> {
                               onSelected: (value) async {
                                 if (value == "Logout") {
                                   alert.alertLogout(context);
-                                } else {
-                                  var token = await FirebaseMessaging.instance.getToken();
-                                  print(token);
                                 }
                               },
                               itemBuilder: (BuildContext context) => widget.getChoicePopUp(context),
@@ -100,7 +107,7 @@ class HomeState extends State<Home> {
                         children: [
                           widget.getWidgetMenu2(
                             context: context,
-                            routeName: "/homeVendor",
+                            routeName: "/mainPenerimaan",
                             title: "Penerimaan Barang Proyek",
                             color: defOrange,
                             colorIcon: defBlue,
@@ -110,7 +117,7 @@ class HomeState extends State<Home> {
                           SizedBox(height: 15),
                           widget.getWidgetMenu2(
                             context: context,
-                            routeName: "/homeVendor",
+                            routeName: "/laporanPenerimaan",
                             title: "Laporan Penerimaan Barang",
                             color: defRed,
                             colorIcon: defBlue,

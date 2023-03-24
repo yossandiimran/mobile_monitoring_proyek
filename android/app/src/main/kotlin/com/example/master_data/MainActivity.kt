@@ -1,4 +1,4 @@
-package com.central.mobile_monitoring_proyek
+package com.central.grproyek
 
 import io.flutter.embedding.android.FlutterActivity
 

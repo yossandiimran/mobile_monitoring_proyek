@@ -12,10 +12,11 @@ class LoginService {
 
     try {
       var url = global.getMainServiceUrl('login');
+
       var obj = {
         "username": objParam["user"],
         "password": objParam["pass"],
-        'aplikasi': 'emopb',
+        'aplikasi': 'egrproyek',
       };
       await http.post(url, body: obj).then((res) async {
         var data = json.decode(res.body), lm = LoginModel.fromJson(data);

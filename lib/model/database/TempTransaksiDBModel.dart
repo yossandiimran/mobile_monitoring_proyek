@@ -1,48 +1,64 @@
 // ignore_for_file: file_names
 
 class TempTransaksiDBModel {
-  String id = "";
-  String noPoSto = "";
+  String plant = "";
+  String noMobil = "";
+  String noPo = "";
+  String detail = "";
   String foto = "";
   String keterangan = "";
+  String lat = "";
+  String lng = "";
   String statusKirim = "";
+  String isDone = "";
   String createdAt = "";
-  String sendAt = "";
 
   TempTransaksiDBModel(
-    this.id,
-    this.noPoSto,
+    this.plant,
+    this.noMobil,
+    this.noPo,
+    this.detail,
     this.foto,
     this.keterangan,
+    this.lat,
+    this.lng,
     this.statusKirim,
+    this.isDone,
     this.createdAt,
-    this.sendAt,
   );
 
   TempTransaksiDBModel.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
-    noPoSto = map['no_po_sto'];
-    foto = map['foto'];
-    keterangan = map['keterangan'];
-    statusKirim = map['status_kirim'];
-    createdAt = map['created_at'];
-    sendAt = map['send_at'];
+    plant = map["plant"];
+    noMobil = map["no_mobil"];
+    noPo = map["no_po"];
+    detail = map["detail"];
+    foto = map["foto"];
+    keterangan = map["keterangan"];
+    lat = map["lat"];
+    lng = map["lng"];
+    statusKirim = map["status_kirim"];
+    isDone = map["is_done"];
+    createdAt = map["created_at"];
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'no_po_sto': noPoSto,
-      'foto': foto,
-      'keterangan': keterangan,
-      'status_kirim': statusKirim,
-      'created_at': createdAt,
-      'send_at': sendAt,
+      "plant": plant,
+      "no_mobil": noMobil,
+      "no_po": noPo,
+      "detail": detail,
+      "foto": foto,
+      "keterangan": keterangan,
+      "lat": lat,
+      "lng": lng,
+      "status_kirim": statusKirim,
+      "is_done": isDone,
+      "created_at": createdAt,
     };
   }
 
   @override
   String toString() {
-    return 'Tagihan{id: $id, no_po_sto: $noPoSto, foto: $foto, keterangan: $keterangan,  status_kirim: $statusKirim, created_at: $createdAt, send_at: $sendAt}';
+    return 'Tagihan{plant: $plant, no_mobil: $noMobil, no_po: $noPo, detail: $detail, foto: $foto, keterangan: $keterangan, lat: $lat, lng: $lng, status_kirim: $statusKirim, is_done: $isDone, created_at: $createdAt}';
   }
 }

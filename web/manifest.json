@@ -1,6 +1,6 @@
 {
-    "name": "mobile_monitoring_proyek",
-    "short_name": "mobile_monitoring_proyek",
+    "name": "grproyek",
+    "short_name": "grproyek",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

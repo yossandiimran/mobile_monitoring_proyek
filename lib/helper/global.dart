@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:mobile_monitoring_proyek/header.dart';
+import 'package:grproyek/header.dart';
+import 'package:grproyek/helper/database/database.dart';
 
 Global global = Global();
 Preference preference = Preference();
@@ -11,7 +12,7 @@ TextStyling textStyling = TextStyling();
 FirebaseMessagingHelper fbmessaging = FirebaseMessagingHelper();
 
 var appVersion = '0.0.1';
-
+final dbHelper = DatabaseHelper.instance;
 //Default Theme Color
 Color defBlue = const Color(0xff1572e8), defRed = const Color(0xffea4d56);
 Color defOrange = const Color(0xffff910a), defGreen = const Color(0xff2bb930);
@@ -25,26 +26,22 @@ class Global {
 
   //Handle Service ===============================================================
   // DEV PUBLIC 36.91.208.116
-  // var baseUrl = 'http://192.168.1.113:30/master-data/public/api/';
   var baseUrl = 'http://36.91.208.116/user-center/public/api/';
-  var bapiUrl = 'http://36.91.208.116:8000/user-center/getkend';
-  // var bapiUrl = 'http://36.91.208.116:8000/user-center/getkend';
+  var transUrl = 'http://36.91.208.116/emopb/public/api/';
+  var imageUrl = 'http://36.91.208.116/emopb/public/';
 
-  //PRD PUBLIC
-  // var baseUrl = 'http://210.210.165.197/geura/public/api/';
-  // var bapiUrl = 'http://202.138.230.51:8080/ebbm/';
+  // Local Dev 113
+  // var baseUrl = 'http://192.168.1.113:30/sum-app/public/api/';
+  // var transUrl = 'http://192.168.1.113:30/emopb/public/api/';
+  // var imageUrl = 'http://192.168.1.113:30/emopb/public/';
+
+  //PRD PUBLIC 210.210.165.197
+  // var baseUrl = 'http://210.210.165.197/user-center/public/api/';
+  // var transUrl = 'http://210.210.165.197/grproyek/public/api/';
+  // var imageUrl = 'http://210.210.165.197/grproyek/public/';
 
   getMainServiceUrl(String link) => Uri.parse(baseUrl + link);
-
-  getBapiServiceUrl(String link) {
-    var url = Uri.parse(bapiUrl + link);
-    if (preference.getData("urlsap") != null) {
-      if (preference.getData("urlsap") != " ") {
-        url = Uri.parse(preference.getData("urlsap") + link);
-      }
-    }
-    return url;
-  }
+  getTrxServiceUrl(String link) => Uri.parse(transUrl + link);
 
   defaultErrorResponse(context, message) => alert.alertWarning(context: context, text: message);
 
