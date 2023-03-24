@@ -342,6 +342,7 @@ class MainPenerimaanState extends State<MainPenerimaan> {
           return global.errorResponse(context, "Kesalahan Aplikasi : err(101)!");
         }
       } catch (err) {
+        print(err);
         return global.errorResponse(context, "Kesalahan Aplikasi : err(100)!");
       }
     }

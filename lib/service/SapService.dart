@@ -21,6 +21,7 @@ class SapService {
         'werks': preference.getData("plant"),
         'param': jsonEncode(objParam),
       }).then((res) {
+        print("urra");
         var data = json.decode(res.body);
         if (res.statusCode == 200) {
           if (data["T_RETURN"].length != 0) {
