@@ -11,8 +11,7 @@ class InputPenerimaan extends StatefulWidget {
 class InputPenerimaanState extends State<InputPenerimaan> {
   final objParam;
   var plant, dataPo, current, lat, lng, cntNotif = 0, indexDone = 0;
-  TextEditingController noMobil = TextEditingController();
-  TextEditingController keterangan = TextEditingController();
+  TextEditingController noMobil = TextEditingController(), keterangan = TextEditingController();
   InputPenerimaanState(this.objParam);
   List<File> imageFileList = [];
   final List<bool> isDone = <bool>[false, true];
@@ -21,7 +20,6 @@ class InputPenerimaanState extends State<InputPenerimaan> {
   void initState() {
     plant = objParam["lokasi"];
     dataPo = jsonDecode(objParam["dataPo"]);
-    print(dataPo);
     getNotifBadge();
     super.initState();
   }
@@ -29,9 +27,7 @@ class InputPenerimaanState extends State<InputPenerimaan> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        return true;
-      },
+      onWillPop: () async => true,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: defWhite,
@@ -51,9 +47,7 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                   "noPo": dataPo[0]["EBELN"],
                   "barang": dataPo[0]["MATNR"]
                 };
-                Navigator.pushNamed(context, '/historyPenerimaan', arguments: obj).then((value) {
-                  getNotifBadge();
-                });
+                Navigator.pushNamed(context, '/historyPenerimaan', arguments: obj).then((value) => getNotifBadge());
               },
             ),
           ],
@@ -96,19 +90,14 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                                 leading: Icon(Icons.receipt_long_rounded, color: defPurple, size: 40),
                                 title: Text("Lokasi   : $plant\nPO          : " + dataPo[0]["EBELN"]),
                               ),
-                              Divider(
-                                color: defBlack1,
-                                thickness: 3,
-                              ),
+                              Divider(color: defBlack1, thickness: 3),
                               for (var i = 0; i < dataPo.length; i++)
                                 ListTile(
                                   visualDensity: VisualDensity(horizontal: 0, vertical: -4),
                                   minLeadingWidth: 4,
                                   leading: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(Icons.circle, color: Colors.blueGrey, size: 14),
-                                    ],
+                                    children: <Widget>[Icon(Icons.circle, color: Colors.blueGrey, size: 14)],
                                   ),
                                   title: Text(dataPo[i]["TXZ01"]),
                                   subtitle: Text(
@@ -137,8 +126,7 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                               ),
                               maxLength: 10,
                               onFieldSubmitted: (value) {
-                                var nVal = value.replaceAll(' ', '');
-                                noMobil.text = nVal.toUpperCase();
+                                noMobil.text = value.replaceAll(' ', '').toUpperCase();
                                 setState(() {});
                               },
                             ),
@@ -165,22 +153,18 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.only(left: 15, right: 15, top: 15),
+                            padding: EdgeInsets.all(15),
                             child: Wrap(
                               children: [
                                 GestureDetector(
-                                  onTap: () async {
-                                    getImage();
-                                  },
+                                  onTap: () => getImage(),
                                   child: Container(
                                     margin: EdgeInsets.all(5),
                                     width: 80,
                                     height: 120,
                                     decoration: BoxDecoration(
                                       border: Border.all(color: defGreen),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(20),
-                                      ),
+                                      borderRadius: BorderRadius.all(Radius.circular(20)),
                                     ),
                                     child: Center(
                                       child: Icon(Icons.camera_alt, color: defGreen),
@@ -199,9 +183,7 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                                       height: 120,
                                       decoration: BoxDecoration(
                                         border: Border.all(color: defGreen),
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(20),
-                                        ),
+                                        borderRadius: BorderRadius.all(Radius.circular(20)),
                                         image: DecorationImage(
                                           image: FileImage(imageFileList[i]),
                                           fit: BoxFit.cover,
@@ -212,7 +194,6 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 20),
                           Container(
                             child: Text(
                               "*) Tap Foto Untuk Menghapus",
@@ -238,8 +219,6 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                                     for (int i = 0; i < isDone.length; i++) {
                                       isDone[i] = i == index;
                                     }
-
-                                    print(indexDone);
                                   });
                                 },
                                 borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -282,9 +261,7 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                                 ),
                                 Spacer(),
                                 GestureDetector(
-                                  onTap: () async {
-                                    sendService();
-                                  },
+                                  onTap: () => sendService(),
                                   child: Container(
                                     width: global.getWidth(context) / 2.5,
                                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -331,25 +308,16 @@ class InputPenerimaanState extends State<InputPenerimaan> {
   }
 
   getNotifBadge() async {
-    cntNotif = (await dbHelper.countTransaksi(
-      plant: plant,
-      noPo: dataPo[0]["EBELN"],
-      barang: dataPo[0]["MATNR"],
-    ))!;
+    cntNotif = (await dbHelper.countTransaksi(plant: plant, noPo: dataPo[0]["EBELN"], barang: dataPo[0]["MATNR"]))!;
     setState(() {});
   }
 
   getKoordinat() async {
-    current = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+    current = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     setState(() {
       lat = current == null ? "" : current.latitude.toString();
       lng = current == null ? "" : current.longitude.toString();
     });
-
-    print(lat);
-    print(lng);
   }
 
   sendService() async {
@@ -372,27 +340,20 @@ class InputPenerimaanState extends State<InputPenerimaan> {
         "noPo": dataPo[0]["EBELN"],
         "barang": dataPo[0]["MATNR"]
       };
-      Navigator.pushNamed(context, '/historyPenerimaan', arguments: obj).then((value) {
-        getNotifBadge();
-      });
+      Navigator.pushNamed(context, '/historyPenerimaan', arguments: obj).then((value) => getNotifBadge());
+
       return alert.alertWarning(context: context, text: "Transaksi sebelumnya belum dikirim ke server !");
     }
 
     if (isChecked["status"]) {
       insertPenerimaanDb();
-      alert.alertSuccess(
-        context: context,
-        text: isChecked["message"],
-      );
+      alert.alertSuccess(context: context, text: isChecked["message"]);
       noMobil.clear();
       keterangan.clear();
       imageFileList.clear();
       getNotifBadge();
     } else {
-      alert.alertWarning(
-        context: context,
-        text: isChecked["message"],
-      );
+      alert.alertWarning(context: context, text: isChecked["message"]);
     }
   }
 
@@ -422,7 +383,7 @@ class InputPenerimaanState extends State<InputPenerimaan> {
     try {
       await dbHelper.insertTransaksi(transaksi);
     } catch (e) {
-      print(e);
+      alert.alertWarning(context: context, text: "Terjadi kesalahan sistem aplikasi !...");
     }
   }
 
@@ -433,8 +394,7 @@ class InputPenerimaanState extends State<InputPenerimaan> {
     if (data.isEmpty) {
       return {
         "status": true,
-        "message":
-            "Berhasil menambahkan laporan di lokal, mohon untuk segera mengirim laporan secara online melalui histori pelaporan !"
+        "message": "Berhasil menambahkan laporan, segera mengirim laporan secara online melalui menu histori !"
       };
     } else {
       final DateTime date = DateTime.parse(data[(data.length - 1)]["created_at"]);
