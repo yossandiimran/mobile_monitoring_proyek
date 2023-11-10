@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:grproyek/header.dart';
 import 'package:grproyek/helper/database/database.dart';
+import 'package:intl/intl.dart';
 
 Global global = Global();
 Preference preference = Preference();
@@ -11,7 +12,7 @@ CustomWidget widget = CustomWidget();
 TextStyling textStyling = TextStyling();
 FirebaseMessagingHelper fbmessaging = FirebaseMessagingHelper();
 
-var appVersion = '1.0.0';
+var appVersion = '1.0.1';
 final dbHelper = DatabaseHelper.instance;
 //Default Theme Color
 Color defBlue = const Color(0xff1572e8), defRed = const Color(0xffea4d56);
@@ -26,9 +27,9 @@ class Global {
 
   //Handle Service ===============================================================
   // DEV PUBLIC 36.91.208.116
-  var baseUrl = 'http://36.91.208.116/user-center/public/api/';
-  var transUrl = 'http://36.91.208.116/emopb/public/api/';
-  var imageUrl = 'http://36.91.208.116/emopb/public/';
+  // var baseUrl = 'http://210.210.165.198/user-center/public/api/';
+  // var transUrl = 'http://210.210.165.198/emopb/public/api/';
+  // var imageUrl = 'http://210.210.165.198/emopb/public/';
 
   // Local Dev 113
   // var baseUrl = 'http://192.168.1.113:30/sum-app/public/api/';
@@ -36,9 +37,9 @@ class Global {
   // var imageUrl = 'http://192.168.1.113:30/emopb/public/';
 
   //PRD PUBLIC 210.210.165.197
-  // var baseUrl = 'http://210.210.165.197/user-center/public/api/';
-  // var transUrl = 'http://210.210.165.197/grproyek/public/api/';
-  // var imageUrl = 'http://210.210.165.197/grproyek/public/';
+  var baseUrl = 'http://210.210.165.197/user-center/public/api/';
+  var transUrl = 'http://210.210.165.197/grproyek/public/api/';
+  var imageUrl = 'http://210.210.165.197/grproyek/public/';
 
   getMainServiceUrl(String link) => Uri.parse(baseUrl + link);
   getTrxServiceUrl(String link) => Uri.parse(transUrl + link);
@@ -96,5 +97,17 @@ class Global {
     } else if (res.statusCode == 400) {
       return global.errorResponsePop(context, data["message"]);
     }
+  }
+
+  String formatDate(DateTime dateTime) {
+    return DateFormat('MM/dd/yyyy').format(dateTime);
+  }
+
+  String formatTime(DateTime dateTime) {
+    return DateFormat('hh:mm:ss').format(dateTime);
+  }
+
+  String formatDate2(DateTime dateTime) {
+    return DateFormat('yyyy-MM-dd').format(dateTime);
   }
 }

@@ -10,9 +10,12 @@ class InputPenerimaan extends StatefulWidget {
 
 class InputPenerimaanState extends State<InputPenerimaan> {
   final objParam;
+  bool isLoadImage = false;
   var plant, dataPo, current, lat, lng, cntNotif = 0, indexDone = 0;
   TextEditingController noMobil = TextEditingController(), keterangan = TextEditingController();
+  TextEditingController noDoc = TextEditingController();
   InputPenerimaanState(this.objParam);
+  DateFormat dateFormat = DateFormat('ddMMyy');
   List<File> imageFileList = [];
   final List<bool> isDone = <bool>[false, true];
 
@@ -21,6 +24,8 @@ class InputPenerimaanState extends State<InputPenerimaan> {
     plant = objParam["lokasi"];
     dataPo = jsonDecode(objParam["dataPo"]);
     getNotifBadge();
+    getKoordinat();
+    generateNoDoc();
     super.initState();
   }
 
@@ -47,7 +52,10 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                   "noPo": dataPo[0]["EBELN"],
                   "barang": dataPo[0]["MATNR"]
                 };
-                Navigator.pushNamed(context, '/historyPenerimaan', arguments: obj).then((value) => getNotifBadge());
+                Navigator.pushNamed(context, '/historyPenerimaan', arguments: obj).then((value) {
+                  getNotifBadge();
+                  generateNoDoc();
+                });
               },
             ),
           ],
@@ -65,7 +73,7 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                 Spacer(),
                 Container(
                   padding: EdgeInsets.only(top: 20),
-                  height: global.getHeight(context) - (kToolbarHeight * 1.4),
+                  height: global.getHeight(context) - (kToolbarHeight * 1),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
                     color: Colors.blueGrey.shade50,
@@ -105,6 +113,38 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                                   ),
                                 ),
                             ]),
+                          ),
+                          Visibility(
+                            visible: false,
+                            child: Container(
+                              alignment: Alignment.bottomLeft,
+                              margin: EdgeInsets.only(top: 5, left: 10, right: 10),
+                              child: Text("  No Document :", textAlign: TextAlign.left),
+                            ),
+                          ),
+                          Visibility(
+                            visible: false,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 6, horizontal: 20),
+                              margin: EdgeInsets.only(top: 5, left: 10, right: 10),
+                              decoration: widget.decCont2(Colors.white, 15, 15, 15, 15),
+                              width: global.getWidth(context),
+                              child: TextFormField(
+                                textCapitalization: TextCapitalization.characters,
+                                controller: noDoc,
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "No Document",
+                                  counterText: "",
+                                ),
+                                maxLength: 10,
+                                onFieldSubmitted: (value) {
+                                  noDoc.text = value.replaceAll(' ', '').toUpperCase();
+                                  setState(() {});
+                                },
+                              ),
+                            ),
                           ),
                           Container(
                             alignment: Alignment.bottomLeft,
@@ -157,7 +197,12 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                             child: Wrap(
                               children: [
                                 GestureDetector(
-                                  onTap: () => getImage(),
+                                  onTap: () async {
+                                    setState(() {
+                                      isLoadImage = true;
+                                    });
+                                    getImage();
+                                  },
                                   child: Container(
                                     margin: EdgeInsets.all(5),
                                     width: 80,
@@ -167,7 +212,9 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                                       borderRadius: BorderRadius.all(Radius.circular(20)),
                                     ),
                                     child: Center(
-                                      child: Icon(Icons.camera_alt, color: defGreen),
+                                      child: isLoadImage
+                                          ? CircularProgressIndicator(color: defGreen)
+                                          : Icon(Icons.camera_alt, color: defGreen),
                                     ),
                                   ),
                                 ),
@@ -185,7 +232,8 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                                         border: Border.all(color: defGreen),
                                         borderRadius: BorderRadius.all(Radius.circular(20)),
                                         image: DecorationImage(
-                                          image: FileImage(imageFileList[i]),
+                                          image: FileImage(File(imageFileList[i].path)),
+                                          // image: MemoryImage(imageFileList[i]),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -293,16 +341,39 @@ class InputPenerimaanState extends State<InputPenerimaan> {
     );
   }
 
+  Future<void> generateNoDoc() async {
+    String formattedDate = dateFormat.format(DateTime.now());
+    String result = plant.substring(plant.length - 2) + formattedDate;
+    noDoc.text = result;
+    setState(() {});
+  }
+
   Future getImage() async {
     var img = await ImagePicker.platform.pickImage(
       source: ImageSource.camera,
-      maxWidth: 1276,
-      maxHeight: 780,
+      maxWidth: 1280,
+      maxHeight: 720,
       imageQuality: 80,
     );
     if (img != null) {
       File rotatedImage = await FlutterExifRotation.rotateAndSaveImage(path: img.path);
-      imageFileList.add(File(rotatedImage.path));
+      // imageFileList.add(File(rotatedImage.path));
+
+      // final watermarkedImg = await ImageWatermark.addTextWatermark(
+      //   imgBytes: rotatedImage.readAsBytesSync(),
+      //   watermarkText:
+      //       "$lat, $lng \n $plant \n " + global.formatDate(DateTime.now()) + ' ' + global.formatTime(DateTime.now()),
+      //   dstX: 10,
+      //   dstY: 10,
+      //   color: defWhite,
+      // );
+      // File file = File(img.path);
+
+      // // Write image data to file
+      // var imgBuffer = await file.writeAsBytes(watermarkedImg);
+      // imageFileList.add(imgBuffer);
+      imageFileList.add(rotatedImage);
+      isLoadImage = false;
       setState(() {});
     }
   }
@@ -329,6 +400,8 @@ class InputPenerimaanState extends State<InputPenerimaan> {
     noMobil.text = nVal.toUpperCase();
 
     alert.loadingAlert(context: context, text: "Menyimpan Data ...", isPop: false);
+    await getKoordinat();
+
     Map isChecked = await checkInterval();
 
     Navigator.pop(context);
@@ -340,7 +413,10 @@ class InputPenerimaanState extends State<InputPenerimaan> {
         "noPo": dataPo[0]["EBELN"],
         "barang": dataPo[0]["MATNR"]
       };
-      Navigator.pushNamed(context, '/historyPenerimaan', arguments: obj).then((value) => getNotifBadge());
+      Navigator.pushNamed(context, '/historyPenerimaan', arguments: obj).then((value) {
+        getNotifBadge();
+        generateNoDoc();
+      });
 
       return alert.alertWarning(context: context, text: "Transaksi sebelumnya belum dikirim ke server !");
     }
@@ -352,6 +428,7 @@ class InputPenerimaanState extends State<InputPenerimaan> {
       keterangan.clear();
       imageFileList.clear();
       getNotifBadge();
+      generateNoDoc();
     } else {
       alert.alertWarning(context: context, text: isChecked["message"]);
     }
@@ -362,6 +439,7 @@ class InputPenerimaanState extends State<InputPenerimaan> {
     if (imageFileList.isNotEmpty) {
       for (var i = 0; i < imageFileList.length; i++) {
         imgList.add(imageFileList[i].path);
+        // imgList.add(imageFileList[i].toString());
       }
     }
 
@@ -378,7 +456,10 @@ class InputPenerimaanState extends State<InputPenerimaan> {
       'status_kirim': "0",
       'is_done': checkDone,
       'created_at': DateTime.now().toString(),
+      'no_doc': noDoc.text,
     };
+
+    print(row["no_doc"]);
     TempTransaksiDBModel transaksi = TempTransaksiDBModel.fromMap(row);
     try {
       await dbHelper.insertTransaksi(transaksi);
@@ -388,10 +469,13 @@ class InputPenerimaanState extends State<InputPenerimaan> {
   }
 
   Future<Map> checkInterval() async {
+    print(1);
     final allRows = await dbHelper.readTransaksiFilter(noMobil: noMobil.text, noPo: dataPo[0]["EBELN"]);
+    print(2);
     var data = allRows;
     setState(() {});
     if (data.isEmpty) {
+      generateNoDoc();
       return {
         "status": true,
         "message": "Berhasil menambahkan laporan, segera mengirim laporan secara online melalui menu histori !"
@@ -400,8 +484,15 @@ class InputPenerimaanState extends State<InputPenerimaan> {
       final DateTime date = DateTime.parse(data[(data.length - 1)]["created_at"]);
       final DateTime now = DateTime.now();
       final Duration difference = now.difference(date);
-      var textAlert = "Gagal dapat menyimpan data untuk kode kendaraan " + noMobil.text;
-      return {"status": difference.inHours >= objParam["durasi"], "message": textAlert};
+      var textAlert = "Tidak dapat menyimpan data untuk kode kendaraan " + noMobil.text;
+      if (difference.inHours >= objParam["durasi"]) {
+        return {
+          "status": true,
+          "message": "Berhasil menambahkan laporan, segera mengirim laporan secara online melalui menu histori !"
+        };
+      } else {
+        return {"status": difference.inHours >= objParam["durasi"], "message": textAlert};
+      }
     }
   }
 }

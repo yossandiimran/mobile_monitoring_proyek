@@ -58,7 +58,7 @@ class HistoryPenerimaanState extends State<HistoryPenerimaan> {
                 Spacer(),
                 Container(
                   // padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                  height: global.getHeight(context) - (kToolbarHeight * 1.4),
+                  height: global.getHeight(context) - (kToolbarHeight * 1),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
                     color: Colors.blueGrey.shade50,

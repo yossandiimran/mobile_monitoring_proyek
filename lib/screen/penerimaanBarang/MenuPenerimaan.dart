@@ -51,7 +51,7 @@ class MainPenerimaanState extends State<MainPenerimaan> {
                 Spacer(),
                 Container(
                   padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                  height: global.getHeight(context) - (kToolbarHeight * 1.4),
+                  height: global.getHeight(context) - (kToolbarHeight * 1),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
                     color: Colors.blueGrey.shade50,
@@ -109,6 +109,7 @@ class MainPenerimaanState extends State<MainPenerimaan> {
                                 child: TextFormField(
                                   controller: keyword,
                                   textInputAction: TextInputAction.search,
+                                  keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: "Cari No Po",
@@ -324,7 +325,6 @@ class MainPenerimaanState extends State<MainPenerimaan> {
     Map objParam = {"PLANT": plantData[(int.parse(plantIdx) - 1)]["PLANT"]};
     var rawPo = await SapService(context: context, objParam: objParam).callResponseSap(urlSap: "fmrfc2t020");
     if (rawPo != null) {
-      global.successResponse(context, "Berhasil Mengambil PO");
       try {
         if (rawPo != "") {
           List checkAvaliablePo = await LaporanService(

@@ -12,7 +12,10 @@ class LaporanService {
     try {
       var url = global.getTrxServiceUrl("transaksi/list");
       var header = {'authorization': 'Bearer ' + preference.getData('token')};
-      await http.post(url, headers: header).then((res) async {
+      print(header);
+      Map body = {"plant": preference.getData("plant")};
+      print(body);
+      await http.post(url, headers: header, body: body).then((res) async {
         var data = json.decode(res.body);
         if (data["success"] == 'false') {
           if (data["message" == "Unauthenticated."]) {

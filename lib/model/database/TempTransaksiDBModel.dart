@@ -12,6 +12,7 @@ class TempTransaksiDBModel {
   String statusKirim = "";
   String isDone = "";
   String createdAt = "";
+  String noDoc = "";
 
   TempTransaksiDBModel(
     this.plant,
@@ -25,6 +26,7 @@ class TempTransaksiDBModel {
     this.statusKirim,
     this.isDone,
     this.createdAt,
+    this.noDoc,
   );
 
   TempTransaksiDBModel.fromMap(Map<String, dynamic> map) {
@@ -39,6 +41,7 @@ class TempTransaksiDBModel {
     statusKirim = map["status_kirim"];
     isDone = map["is_done"];
     createdAt = map["created_at"];
+    noDoc = map["no_doc"];
   }
 
   Map<String, dynamic> toMap() {
@@ -54,11 +57,12 @@ class TempTransaksiDBModel {
       "status_kirim": statusKirim,
       "is_done": isDone,
       "created_at": createdAt,
+      "no_doc": noDoc,
     };
   }
 
   @override
   String toString() {
-    return 'Tagihan{plant: $plant, no_mobil: $noMobil, no_po: $noPo, detail: $detail, foto: $foto, keterangan: $keterangan, lat: $lat, lng: $lng, status_kirim: $statusKirim, is_done: $isDone, created_at: $createdAt}';
+    return 'Tagihan{plant: $plant, no_mobil: $noMobil, no_po: $noPo, detail: $detail, foto: $foto, keterangan: $keterangan, lat: $lat, lng: $lng, status_kirim: $statusKirim, is_done: $isDone, created_at: $createdAt, no_doc: $noDoc}';
   }
 }

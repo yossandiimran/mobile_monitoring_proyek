@@ -38,7 +38,8 @@ class DatabaseHelper {
             lng TEXT NOT NULL,
             status_kirim TEXT NOT NULL,
             is_done TEXT NOT NULL,
-            created_at TEXT NOT NULL
+            created_at TEXT NOT NULL,
+            no_doc TEXT NOT NULL
           )
           ''');
   }
@@ -58,6 +59,7 @@ class DatabaseHelper {
       'status_kirim': transaksi.statusKirim,
       'is_done': transaksi.isDone,
       'created_at': transaksi.createdAt,
+      'no_doc': transaksi.noDoc,
     });
   }
 

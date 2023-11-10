@@ -37,10 +37,18 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
         backgroundColor: defWhite,
         extendBodyBehindAppBar: true,
         appBar: widget.appBarTitle(
-          context: context,
-          title: "Report Penerimaan Barang Proyek ",
-          color: Colors.transparent,
-        ),
+            context: context,
+            title: "Report Penerimaan Barang Proyek ",
+            color: Colors.transparent,
+            action: [
+              IconButton(
+                onPressed: () {
+                  showActionFilter();
+                },
+                icon: Icon(Icons.filter_list),
+                tooltip: "Filter Data",
+              ),
+            ]),
         body: Stack(children: [
           widget.bgAppbar(context: context),
           Positioned(
@@ -54,7 +62,7 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
                 Spacer(),
                 Container(
                   padding: EdgeInsets.only(top: 10),
-                  height: global.getHeight(context) - (kToolbarHeight * 1.4),
+                  height: global.getHeight(context) - (kToolbarHeight * 1),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
                     color: Colors.blueGrey.shade50,
@@ -80,6 +88,8 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
       ),
     );
   }
+
+  showActionFilter() {}
 
   List<Widget> getChildren() {
     var children = <Widget>[];
@@ -205,7 +215,7 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
                   color: defGrey,
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "  No Mobil",
+                    "  No Document",
                     textAlign: TextAlign.left,
                     style: textStyling.styleText5(14, defWhite),
                   ),
@@ -214,9 +224,29 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
                   color: defGrey,
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    val["transaksi"][i]["no_mobil"].toString(),
+                    val["transaksi"][i]["no_doc"].toString(),
                     textAlign: TextAlign.left,
                     style: textStyling.styleText5(14, defWhite),
+                  ),
+                ),
+              ]),
+              TableRow(children: [
+                Container(
+                  color: defWhite,
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    "  No Mobil",
+                    textAlign: TextAlign.left,
+                    style: textStyling.styleText5(14, defBlack1),
+                  ),
+                ),
+                Container(
+                  color: val["transaksi"][i]["gr"] == "X" ? Colors.green[100] : defWhite,
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    val["transaksi"][i]["no_mobil"].toString(),
+                    textAlign: TextAlign.left,
+                    style: textStyling.styleText5(14, defBlack1),
                   ),
                 ),
               ]),
@@ -231,12 +261,12 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
                   ),
                 ),
                 Container(
-                  color: defWhite,
+                  color: val["transaksi"][i]["gr"] == "X" ? Colors.green[100] : defWhite,
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Text(
                     val["transaksi"][i]["keterangan"].toString(),
                     textAlign: TextAlign.left,
-                    style: textStyling.styleText5(14, defBlack1),
+                    style: textStyling.nunitoBold(14, defBlack1),
                   ),
                 ),
               ]),
@@ -251,12 +281,32 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
                   ),
                 ),
                 Container(
-                  color: defWhite,
+                  color: val["transaksi"][i]["gr"] == "X" ? Colors.green[100] : defWhite,
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Text(
                     val["transaksi"][i]["timestamp"].toString(),
                     textAlign: TextAlign.left,
+                    style: textStyling.nunitoBold(14, defBlack1),
+                  ),
+                ),
+              ]),
+              TableRow(children: [
+                Container(
+                  color: defWhite,
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    "  koordinat",
+                    textAlign: TextAlign.left,
                     style: textStyling.styleText5(14, defBlack1),
+                  ),
+                ),
+                Container(
+                  color: val["transaksi"][i]["gr"] == "X" ? Colors.green[100] : defWhite,
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    val["transaksi"][i]["lat"].toString() + ", " + val["transaksi"][i]["lng"].toString(),
+                    textAlign: TextAlign.left,
+                    style: textStyling.nunitoBold(14, defBlack1),
                   ),
                 ),
               ]),
@@ -271,7 +321,7 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
                   ),
                 ),
                 Container(
-                  color: defWhite,
+                  color: val["transaksi"][i]["gr"] == "X" ? Colors.green[100] : defWhite,
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Wrap(children: [
                     for (var x = 0; x < val["transaksi"][i]["foto"].length; x++)
@@ -309,10 +359,56 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
                         child: Container(
                           padding: EdgeInsets.all(8),
                           margin: EdgeInsets.all(4),
-                          decoration: widget.decCont2(defOrange, 10, 10, 10, 10),
-                          child: Text("Foto " + (x + 1).toString()),
+                          decoration: widget.decCont(defOrange, 10, 10, 10, 10),
+                          child: Text("Foto " + (x + 1).toString(), style: textStyling.styleText5(14, defWhite)),
                         ),
                       ),
+                  ]),
+                ),
+              ]),
+              TableRow(children: [
+                Container(
+                  color: defWhite,
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    "  Sudah di gr",
+                    textAlign: TextAlign.left,
+                    style: textStyling.styleText5(14, defBlack1),
+                  ),
+                ),
+                Container(
+                  color: val["transaksi"][i]["gr"] == "X" ? Colors.green[100] : defWhite,
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Wrap(children: [
+                    GestureDetector(
+                      onTap: () async {
+                        if (val["transaksi"][i]["gr"] != "X") {
+                          alert.loadingAlert(context: context, text: "Mohon Tunggu", isPop: false);
+                          Map obj = {"id": val["transaksi"][i]["id"].toString()};
+                          await TransaksiService(context: context, objParam: obj).acceptGr();
+                          global.successResponsePop(context, "Berhasil");
+                          getHistoryTransaksi();
+                        }
+                      },
+                      child: Container(
+                        width: 100,
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.all(4),
+                        decoration:
+                            widget.decCont2(val["transaksi"][i]["gr"] == "X" ? defGreen : defRed, 10, 10, 10, 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            val["transaksi"][i]["gr"] == "X"
+                                ? Icon(Icons.check_circle_rounded, color: defWhite)
+                                : Icon(Icons.remove_circle_rounded, color: defWhite),
+                            val["transaksi"][i]["gr"] == "X"
+                                ? Text(" Selesai", style: textStyling.styleText5(12, defWhite))
+                                : Text(" Terima", style: textStyling.styleText5(12, defWhite)),
+                          ],
+                        ),
+                      ),
+                    ),
                   ]),
                 ),
               ]),
@@ -335,19 +431,7 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
     return formatted.toString();
   }
 
-  sendToServer(obj) async {
-    final data = await dbHelper.readTransaksiFilterDate(
-      noMobil: obj["no_mobil"],
-      noPo: obj["no_po"],
-      createdAt: obj["created_at"],
-    );
-
-    await TransaksiService(
-      context: context,
-      objParam: data[0],
-      duration: objParam["durasi"],
-    ).createTransaksiService();
-
+  acceptGr(id) async {
     getHistoryTransaksi();
   }
 }
