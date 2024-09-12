@@ -12,7 +12,7 @@ CustomWidget widget = CustomWidget();
 TextStyling textStyling = TextStyling();
 FirebaseMessagingHelper fbmessaging = FirebaseMessagingHelper();
 
-var appVersion = '1.0.1';
+var appVersion = '1.3.0';
 final dbHelper = DatabaseHelper.instance;
 //Default Theme Color
 Color defBlue = const Color(0xff1572e8), defRed = const Color(0xffea4d56);
@@ -27,14 +27,14 @@ class Global {
 
   //Handle Service ===============================================================
   // DEV PUBLIC 36.91.208.116
-  // var baseUrl = 'http://210.210.165.198/user-center/public/api/';
-  // var transUrl = 'http://210.210.165.198/emopb/public/api/';
-  // var imageUrl = 'http://210.210.165.198/emopb/public/';
+  // var baseUrl = 'http://192.168.1.128/user-center/public/api/';
+  // var transUrl = 'http://192.168.1.128/emopb/public/api/';
+  // var imageUrl = 'http://192.168.1.128/emopb/public/';
 
   // Local Dev 113
-  // var baseUrl = 'http://192.168.1.113:30/sum-app/public/api/';
-  // var transUrl = 'http://192.168.1.113:30/emopb/public/api/';
-  // var imageUrl = 'http://192.168.1.113:30/emopb/public/';
+  // var baseUrl = 'http://192.168.1.114/sum-app/public/api/';
+  // var transUrl = 'http://192.168.1.114/emopb/public/api/';
+  // var imageUrl = 'http://192.168.1.114/emopb/public/';
 
   //PRD PUBLIC 210.210.165.197
   var baseUrl = 'http://210.210.165.197/user-center/public/api/';

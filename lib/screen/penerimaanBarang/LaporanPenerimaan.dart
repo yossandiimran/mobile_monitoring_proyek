@@ -11,6 +11,8 @@ class LaporanPenerimaan extends StatefulWidget {
 class LaporanPenerimaanState extends State<LaporanPenerimaan> {
   final objParam;
   var dataListHistory = [], tempListHistory = [], isLoading = true, groupedList = {};
+  var statusIdx = "2";
+  TextEditingController sloc = TextEditingController(text: "");
   LaporanPenerimaanState(this.objParam);
 
   @override
@@ -20,8 +22,14 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
   }
 
   getHistoryTransaksi() async {
-    dataListHistory = await LaporanService(context: context).getLaporanService();
+    sloc.text = preference.getData("plant");
+    Map objSend = {
+      "sloc": sloc.text,
+      "is_done": statusIdx,
+    };
+    dataListHistory = await LaporanService(context: context, objParam: objSend).getLaporanService();
     tempListHistory = dataListHistory;
+    print(tempListHistory);
     isLoading = false;
     setState(() {});
   }
@@ -43,14 +51,84 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
             action: [
               IconButton(
                 onPressed: () {
-                  showActionFilter();
+                  getHistoryTransaksi();
                 },
                 icon: Icon(Icons.filter_list),
                 tooltip: "Filter Data",
               ),
             ]),
         body: Stack(children: [
-          widget.bgAppbar(context: context),
+          Positioned(
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  padding: EdgeInsets.only(top: kToolbarHeight, left: 20, right: 20),
+                  height: kToolbarHeight * 5,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [defBlack1, defGreen, defGreen],
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Spacer(),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 20),
+                            margin: EdgeInsets.only(top: 5, left: 3, right: 3),
+                            decoration: widget.decCont2(Colors.white, 15, 15, 15, 15),
+                            width: global.getWidth(context) / 2.5,
+                            child: TextFormField(
+                              textCapitalization: TextCapitalization.characters,
+                              controller: sloc,
+                              readOnly: true,
+                              enabled: false,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "SLOC ...",
+                                counterText: "",
+                              ),
+                              maxLength: 10,
+                              onChanged: (value) {
+                                getHistoryTransaksi();
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                          Spacer(),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 20),
+                            margin: EdgeInsets.only(top: 5),
+                            decoration: widget.decCont2(Colors.white, 15, 15, 15, 15),
+                            width: global.getWidth(context) / 2.5,
+                            child: DropdownButton<String>(
+                              value: statusIdx,
+                              isExpanded: true,
+                              items: widget.getItemsDropdown("statusReport", []),
+                              onChanged: (newValue) async {
+                                statusIdx = (int.parse(newValue.toString())).toString();
+                                getHistoryTransaksi();
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                          Spacer(),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
           Positioned(
             top: 0,
             bottom: 0,
@@ -62,7 +140,7 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
                 Spacer(),
                 Container(
                   padding: EdgeInsets.only(top: 10),
-                  height: global.getHeight(context) - (kToolbarHeight * 1),
+                  height: global.getHeight(context) - (kToolbarHeight * 2.5),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
                     color: Colors.blueGrey.shade50,
@@ -111,6 +189,7 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
             decoration: widget.decCont2(defWhite, 20, 20, 20, 20),
             child: ExpansionTile(
               title: Text("Nomor PO : " + tempListHistory[i]["nomer_po"].toString()),
+              subtitle: Text("SLOC : " + tempListHistory[i]["plant"].toString()),
               children: getSubChildren(tempListHistory[i]),
             ),
           ),

@@ -11,7 +11,8 @@ class MainPenerimaan extends StatefulWidget {
 class MainPenerimaanState extends State<MainPenerimaan> {
   final objParam;
   bool isLoading = true;
-  var plantIdx = "0", plantData, poData = [], poTemp = [], selectedPo;
+  List plantData = [];
+  var plantIdx = "0", poData = [], poTemp = [], selectedPo;
   var groupedList = {};
   TextEditingController keyword = TextEditingController();
   MainPenerimaanState(this.objParam);
@@ -70,24 +71,25 @@ class MainPenerimaanState extends State<MainPenerimaan> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(vertical: 6, horizontal: 20),
+                          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                           margin: EdgeInsets.only(top: 5),
                           decoration: widget.decCont2(Colors.white, 15, 15, 15, 15),
                           width: global.getWidth(context),
-                          child: DropdownButton<String>(
-                            value: plantIdx,
-                            isExpanded: true,
-                            items: widget.getItemsDropdown("plant", plantData),
-                            onChanged: (newValue) async {
-                              plantIdx = (int.parse(newValue.toString())).toString();
-                              setState(() {});
-                              poTemp.clear();
-                              selectedPo = null;
-                              if (newValue.toString() != "0") {
-                                await getDataPoService();
-                              }
-                            },
-                          ),
+                          child: Text(preference.getData("plant")),
+                          // child: DropdownButton<String>(
+                          //   value: plantIdx,
+                          //   isExpanded: true,
+                          //   items: widget.getItemsDropdown("plant", plantData),
+                          //   onChanged: (newValue) async {
+                          //     plantIdx = (int.parse(newValue.toString())).toString();
+                          //     setState(() {});
+                          //     poTemp.clear();
+                          //     selectedPo = null;
+                          //     if (newValue.toString() != "0") {
+                          //       await getDataPoService();
+                          //     }
+                          //   },
+                          // ),
                         ),
                         SizedBox(height: 10),
                         Divider(thickness: 3, color: defBlack1),
@@ -252,8 +254,8 @@ class MainPenerimaanState extends State<MainPenerimaan> {
                         color: defBlue,
                         padding: EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          "Nama Barang",
-                          textAlign: TextAlign.center,
+                          " Nama Barang",
+                          textAlign: TextAlign.left,
                           style: textStyling.styleText5(14, defWhite),
                         ),
                       ),
@@ -279,8 +281,8 @@ class MainPenerimaanState extends State<MainPenerimaan> {
                     for (var i = 0; i < groupedList[key].length; i++)
                       TableRow(children: [
                         Container(
-                          margin: EdgeInsets.symmetric(vertical: 4),
-                          child: Text(groupedList[key][i]["TXZ01"], textAlign: TextAlign.center),
+                          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+                          child: Text(groupedList[key][i]["TXZ01"], textAlign: TextAlign.left),
                         ),
                         Container(
                           margin: EdgeInsets.symmetric(vertical: 4),
@@ -321,17 +323,23 @@ class MainPenerimaanState extends State<MainPenerimaan> {
   }
 
   Future<void> getDataPoService() async {
-    alert.loadingAlert(context: context, text: "Mengambil PO", isPop: false);
-    Map objParam = {"PLANT": plantData[(int.parse(plantIdx) - 1)]["PLANT"]};
-    var rawPo = await SapService(context: context, objParam: objParam).callResponseSap(urlSap: "fmrfc2t020");
-    if (rawPo != null) {
+    Map objParam = {"FUNCTION": "ZCNTNWRFC2_T020A", "PLANT": "1C00"};
+    // Map objParam = {"FUNCTION": "ZCNTNWRFC2_T020A", "PLANT": plantData[(int.parse(plantIdx) - 1)]["PLANT"]};
+    var rawPos = await SapService(context: context, objParam: objParam).callResponseSap();
+
+    print(rawPos["T_PO"][0]["LGORT"]);
+    print(plantData[(int.parse(plantIdx) - 1)]["PLANT"]);
+    print(rawPos["T_PO"].where((element) => element["LGORT"] == plantData[(int.parse(plantIdx) - 1)]["PLANT"]));
+    var rawPo = rawPos["T_PO"].where((element) => element["LGORT"] == plantData[(int.parse(plantIdx) - 1)]["PLANT"]);
+    rawPo.toList();
+    if (rawPo != []) {
       try {
-        if (rawPo != "") {
+        if (rawPo != []) {
           List checkAvaliablePo = await LaporanService(
             context: context,
             objParam: {"plant": plantData[(int.parse(plantIdx) - 1)]["PLANT"]},
           ).checkAvaliablePo();
-          List newPo = rawPo["T_PO"].where((element) => !checkAvaliablePo.contains(element["EBELN"])).toList();
+          List newPo = rawPo.where((element) => !checkAvaliablePo.contains(element["EBELN"])).toList();
           setState(() {
             poData = newPo;
             poTemp = poData;
@@ -352,10 +360,13 @@ class MainPenerimaanState extends State<MainPenerimaan> {
     await Future.delayed(const Duration(microseconds: 500), () {
       alert.loadingAlert(context: context, text: "Loading ...", isPop: false);
     });
-    Map objParam = {"TEMPRES": "NULL"};
-    var rawPlantData = await SapService(context: context, objParam: objParam).callResponseSap(urlSap: "fmrfc2t019");
+    Map objParam = {"FUNCTION": "ZCNTNWRFC2_T019"};
+    var rawPlantData = await SapService(context: context, objParam: objParam).callResponseSap();
     if (rawPlantData != null) {
+      // preference.getData("plant")
       plantData = rawPlantData["T_PLANT"];
+      plantIdx = (plantData.indexWhere((element) => element["PLANT"] == preference.getData("plant")) + 1).toString();
+      await getDataPoService();
       setState(() {});
       Navigator.pop(context);
     } else {
@@ -368,9 +379,11 @@ class MainPenerimaanState extends State<MainPenerimaan> {
     if (selectedPo == null) {
       return alert.alertWarning(context: context, text: "Silahkan pilih po terlebih dahulu !");
     }
+
     var objectSend = {
       "dataPo": jsonEncode(groupedList[selectedPo]),
-      "lokasi": plantData[(int.parse(plantIdx) - 1)]["PLANT"],
+      // "lokasi": plantData[(int.parse(plantIdx) - 1)]["PLANT"],
+      "lokasi": groupedList[selectedPo][0]["LGORT"],
       "durasi": plantData[(int.parse(plantIdx) - 1)]["ZHOURS"],
     };
     Navigator.pushNamed(context, '/inputPenerimaan', arguments: objectSend);

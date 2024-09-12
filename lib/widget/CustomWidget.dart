@@ -22,7 +22,7 @@ class CustomWidget {
     );
   }
 
-  bgAppbar({required context}) {
+  bgAppbar({required context, int hght = 2}) {
     return Positioned(
       top: 0,
       bottom: 0,
@@ -33,7 +33,7 @@ class CustomWidget {
         children: [
           Container(
             padding: EdgeInsets.only(top: kToolbarHeight, left: 20, right: 20),
-            height: kToolbarHeight * 2,
+            height: kToolbarHeight * hght,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -91,12 +91,78 @@ class CustomWidget {
     );
   }
 
+  getChoiceMenuBarcode(context, menuCode, routeName) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return WillPopScope(
+            child: AlertDialog(
+              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              contentPadding: const EdgeInsets.only(top: 10.0),
+              content: SizedBox(
+                height: global.getWidth(context) / 3,
+                child: Column(
+                  children: [
+                    Spacer(),
+                    Container(
+                      margin: const EdgeInsets.all(10),
+                      child: Text(
+                        "Pilih menu",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: global.getWidth(context) / 20),
+                      ),
+                    ),
+                    Spacer(),
+                    Row(
+                      children: [
+                        Spacer(),
+                        GestureDetector(
+                          onTap: () async {
+                            // Navigator.pushNamed(context, '/statusBarcode');
+                            global.navigateCheckPermission(context: context, route: '/createRekap', menuCode: menuCode);
+                          },
+                          child: Container(
+                            decoration: widget.decCont2(defBlue, 10, 10, 10, 10),
+                            padding: EdgeInsets.only(left: 25, right: 25, top: 10, bottom: 10),
+                            child: Text("Create Rekap", style: textStyling.styleText6(12, defWhite)),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () async {
+                            // Navigator.pushNamed(context, '/statusBarcodeLong');
+                            global.navigateCheckPermission(
+                                context: context, route: '/laporanRekap', menuCode: menuCode);
+                          },
+                          child: Container(
+                            decoration: widget.decCont2(defOrange, 10, 10, 10, 10),
+                            padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                            child: Text(" Laporan Rekap ", style: textStyling.styleText6(12, defWhite)),
+                          ),
+                        ),
+                        Spacer(),
+                      ],
+                    ),
+                    Spacer(),
+                  ],
+                ),
+              ),
+            ),
+            onWillPop: () async {
+              return true;
+            });
+      },
+    );
+  }
+
   getWidgetMenu2(
       {required context, routeName, title, color, icon, colorIcon, menuCode, image, bgColor = Colors.white}) {
     return GestureDetector(
       onTap: () {
         if (routeName == 'back') {
           Navigator.pop(context);
+        } else if (routeName == "/rekapPenerimaan") {
+          getChoiceMenuBarcode(context, menuCode, routeName);
         } else {
           global.navigateCheckPermission(context: context, route: routeName, menuCode: menuCode);
         }
@@ -402,6 +468,11 @@ class CustomWidget {
           );
         }
       }
+    }
+    if (selection == 'statusReport') {
+      widget.add(DropdownMenuItem(value: "2", child: Text("Semua PO", style: textStyling.styleText4(13))));
+      widget.add(DropdownMenuItem(value: "1", child: Text("PO Selesai", style: textStyling.styleText4(13))));
+      widget.add(DropdownMenuItem(value: "0", child: Text("PO Berjalan", style: textStyling.styleText4(13))));
     }
     return widget;
   }

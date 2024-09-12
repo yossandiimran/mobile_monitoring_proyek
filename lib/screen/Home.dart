@@ -90,7 +90,7 @@ class HomeState extends State<Home> {
           widget.getImageBgSugar(context),
           Positioned(
             top: 0,
-            bottom: kToolbarHeight * 3,
+            bottom: kToolbarHeight,
             left: 0,
             right: 0,
             child: Column(
@@ -98,7 +98,7 @@ class HomeState extends State<Home> {
                 Spacer(),
                 Container(
                   margin: EdgeInsets.only(top: 0, left: 15, right: 15),
-                  padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   decoration: widget.decCont2(defWhite, 30, 30, 30, 30),
                   child: ScrollConfiguration(
                     behavior: const ScrollBehavior().copyWith(overscroll: false),
@@ -112,9 +112,8 @@ class HomeState extends State<Home> {
                             color: defOrange,
                             colorIcon: defBlue,
                             menuCode: "penerimaanbarangproyek",
-                            image: AssetImage("assets/shipment.png"),
+                            image: AssetImage("assets/customer2.png"),
                           ),
-                          SizedBox(height: 15),
                           widget.getWidgetMenu2(
                             context: context,
                             routeName: "/laporanPenerimaan",
@@ -123,6 +122,24 @@ class HomeState extends State<Home> {
                             colorIcon: defBlue,
                             menuCode: "laporanpenerimaanbrang",
                             image: AssetImage("assets/barang.png"),
+                          ),
+                          widget.getWidgetMenu2(
+                            context: context,
+                            routeName: "/rekapPenerimaan",
+                            title: "Rekap Penerimaan",
+                            color: defOrange,
+                            colorIcon: defBlue,
+                            menuCode: "laporanpenerimaanbrang",
+                            image: AssetImage("assets/shipment.png"),
+                          ),
+                          widget.getWidgetMenu2(
+                            context: context,
+                            routeName: "/reverseNomorDoc",
+                            title: "Batalkan PO",
+                            color: defGreen,
+                            colorIcon: defBlue,
+                            menuCode: "reversenomordocument",
+                            image: AssetImage("assets/vendor.png"),
                           ),
                         ],
                       ),

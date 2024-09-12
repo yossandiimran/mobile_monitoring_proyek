@@ -186,6 +186,8 @@ class HistoryPenerimaanState extends State<HistoryPenerimaan> {
   }
 
   sendToServer(obj) async {
+    print("asadasd");
+
     final data = await dbHelper.readTransaksiFilterDate(
       noMobil: obj["no_mobil"],
       noPo: obj["no_po"],

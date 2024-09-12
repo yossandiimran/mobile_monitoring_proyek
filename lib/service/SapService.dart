@@ -16,14 +16,15 @@ class SapService {
       await http.post(url, headers: {
         'authorization': 'Bearer ' + preference.getData('token'),
       }, body: {
-        'url': urlSap,
+        'url': "rfcMultiUse",
         'type': 'get',
         'werks': preference.getData("plant"),
         'param': jsonEncode(objParam),
       }).then((res) {
         var data = json.decode(res.body);
+        print("=============================================");
+        print(objParam);
         print(data);
-        print(urlSap);
         if (res.statusCode == 200) {
           if (data["T_RETURN"].length != 0) {
             return global.errorResponse(context, data["T_RETURN"][0]["MESSAGE"]);

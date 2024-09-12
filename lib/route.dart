@@ -20,6 +20,12 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => HistoryPenerimaan(objParam: settings.arguments));
       case '/laporanPenerimaan':
         return MaterialPageRoute(builder: (_) => LaporanPenerimaan());
+      case '/laporanRekap':
+        return MaterialPageRoute(builder: (_) => LaporanRekap());
+      case '/createRekap':
+        return MaterialPageRoute(builder: (_) => CreateRekap());
+      case '/reverseNomorDoc':
+        return MaterialPageRoute(builder: (_) => ReverseTransaksi());
 
       default:
         return _errorRoute();
