@@ -448,71 +448,188 @@ class LaporanRekapState extends State<LaporanRekap> {
   }
 
   downloadPdfAction(dataSelected) async {
-    print(dataSelected);
+    print(dataSelected["details"]);
     // Buat instance dari Document
     final pdf = pw.Document();
 
     // Tambahkan halaman ke PDF
     pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) => pw.Container(
-          child: pw.Column(
-            mainAxisAlignment: pw.MainAxisAlignment.start,
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Align(
-                alignment: pw.Alignment.center,
-                child: pw.Column(children: [
-                  pw.Divider(),
-                  pw.Text(
-                    "Laporan GR Rekap Harian",
-                    textAlign: pw.TextAlign.center,
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
-                  ),
-                  pw.Text(
-                    "Aplikasi GR Proyek",
-                    textAlign: pw.TextAlign.center,
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
-                  ),
-                ]),
-              ),
+      pw.MultiPage(
+        build: (pw.Context context) => [
+          pw.Align(
+            alignment: pw.Alignment.center,
+            child: pw.Column(children: [
               pw.Divider(),
-              pw.SizedBox(height: 3),
-              pw.Row(children: [
-                pw.Text(
-                  "Nomor PO : ${dataSelected["nomer_po"]}",
-                  textAlign: pw.TextAlign.left,
-                  style: pw.TextStyle(fontSize: 8),
+              pw.Text(
+                "Laporan GR Rekap Harian",
+                textAlign: pw.TextAlign.center,
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+              ),
+              pw.Text(
+                "Aplikasi GR Proyek",
+                textAlign: pw.TextAlign.center,
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+              ),
+            ]),
+          ),
+          pw.Divider(),
+          pw.SizedBox(height: 3),
+          pw.Row(children: [
+            pw.Text(
+              "Nomor PO : ${dataSelected["nomer_po"]}",
+              textAlign: pw.TextAlign.left,
+              style: pw.TextStyle(fontSize: 8),
+            ),
+            pw.Spacer(),
+            pw.Text(
+              "Nomor Laporan : ${dataSelected["nomer_laporan"]}",
+              textAlign: pw.TextAlign.left,
+              style: pw.TextStyle(fontSize: 8),
+            ),
+          ]),
+          pw.Row(children: [
+            pw.Text(
+              "Plant Sloc  : ${dataSelected["plant"]}",
+              textAlign: pw.TextAlign.left,
+              style: pw.TextStyle(fontSize: 8),
+            ),
+            pw.Spacer(),
+            pw.Text(
+              "Tanggal : ${DateFormat('yyyy-MM-dd').format(DateTime.parse(dataSelected["created_at"]))}",
+              textAlign: pw.TextAlign.left,
+              style: pw.TextStyle(fontSize: 8),
+            ),
+          ]),
+          pw.SizedBox(height: 10),
+          pw.Table(
+            border: pw.TableBorder.all(width: 1),
+            children: [
+              pw.TableRow(children: [
+                pw.Container(
+                  padding: pw.EdgeInsets.symmetric(vertical: 4),
+                  child: pw.Text(
+                    "No",
+                    textAlign: pw.TextAlign.center,
+                    style: pw.TextStyle(fontSize: 8),
+                  ),
                 ),
-                pw.Spacer(),
-                pw.Text(
-                  "Nomor Laporan : ${dataSelected["nomer_laporan"]}",
-                  textAlign: pw.TextAlign.left,
-                  style: pw.TextStyle(fontSize: 8),
+                pw.Container(
+                  padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
+                  child: pw.Text(
+                    "Deskripsi",
+                    textAlign: pw.TextAlign.left,
+                    style: pw.TextStyle(fontSize: 8),
+                  ),
+                ),
+                pw.Container(
+                  padding: pw.EdgeInsets.symmetric(vertical: 4),
+                  child: pw.Text(
+                    "Satuan",
+                    textAlign: pw.TextAlign.center,
+                    style: pw.TextStyle(fontSize: 8),
+                  ),
                 ),
               ]),
-              pw.Row(children: [
-                pw.Text(
-                  "Plant Sloc  : ${dataSelected["plant"]}",
-                  textAlign: pw.TextAlign.left,
-                  style: pw.TextStyle(fontSize: 8),
-                ),
-                pw.Spacer(),
-                pw.Text(
-                  "Tanggal : ${DateFormat('yyyy-MM-dd').format(DateTime.parse(dataSelected["created_at"]))}",
-                  textAlign: pw.TextAlign.left,
-                  style: pw.TextStyle(fontSize: 8),
-                ),
-              ]),
-              pw.SizedBox(height: 10),
-              pw.Table(
-                border: pw.TableBorder.all(width: 1),
-                children: [
-                  pw.TableRow(children: [
+              for (var i = 0; i < dataSelected["detail"].length; i++)
+                pw.TableRow(
+                  children: [
                     pw.Container(
-                      padding: pw.EdgeInsets.symmetric(vertical: 4),
+                      padding: pw.EdgeInsets.only(top: 3),
+                      alignment: pw.Alignment.center,
                       child: pw.Text(
-                        "No",
+                        (i + 1).toString(),
+                        style: pw.TextStyle(fontSize: 8),
+                      ),
+                    ),
+                    pw.Container(
+                      padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
+                      child: pw.Text(
+                        dataSelected["detail"][i]["TXZ01"].toString(),
+                        textAlign: pw.TextAlign.left,
+                        style: pw.TextStyle(fontSize: 8),
+                      ),
+                    ),
+                    pw.Container(
+                      padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
+                      child: pw.Text(
+                        dataSelected["detail"][i]["MEINS"].toString(),
+                        textAlign: pw.TextAlign.center,
+                        style: pw.TextStyle(fontSize: 8),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+          pw.SizedBox(height: 10),
+          pw.Table(
+            border: pw.TableBorder.all(width: 1),
+            children: [
+              pw.TableRow(children: [
+                pw.Container(
+                  padding: pw.EdgeInsets.symmetric(vertical: 4),
+                  child: pw.Text(
+                    "No",
+                    textAlign: pw.TextAlign.center,
+                    style: pw.TextStyle(fontSize: 8),
+                  ),
+                ),
+                pw.Container(
+                  padding: pw.EdgeInsets.symmetric(vertical: 4),
+                  child: pw.Text(
+                    "No Doc",
+                    textAlign: pw.TextAlign.center,
+                    style: pw.TextStyle(fontSize: 8),
+                  ),
+                ),
+                pw.Container(
+                  padding: pw.EdgeInsets.symmetric(vertical: 4),
+                  child: pw.Text(
+                    "No Mobil",
+                    textAlign: pw.TextAlign.center,
+                    style: pw.TextStyle(fontSize: 8),
+                  ),
+                ),
+                pw.Container(
+                  padding: pw.EdgeInsets.symmetric(vertical: 4),
+                  child: pw.Text(
+                    "Ket",
+                    textAlign: pw.TextAlign.center,
+                    style: pw.TextStyle(fontSize: 8),
+                  ),
+                ),
+                pw.Container(
+                  padding: pw.EdgeInsets.symmetric(vertical: 4),
+                  child: pw.Text(
+                    "Tgl Penerimaan Barang",
+                    textAlign: pw.TextAlign.center,
+                    style: pw.TextStyle(fontSize: 8),
+                  ),
+                ),
+              ]),
+              for (var i = 0; i < dataSelected["details"].length; i++)
+                pw.TableRow(
+                  children: [
+                    pw.Container(
+                      padding: pw.EdgeInsets.only(top: 3),
+                      alignment: pw.Alignment.center,
+                      child: pw.Text(
+                        (i + 1).toString(),
+                        style: pw.TextStyle(fontSize: 8),
+                      ),
+                    ),
+                    pw.Container(
+                      padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
+                      child: pw.Text(
+                        dataSelected["details"][i]["no_doc"].toString(),
+                        textAlign: pw.TextAlign.left,
+                        style: pw.TextStyle(fontSize: 8),
+                      ),
+                    ),
+                    pw.Container(
+                      padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
+                      child: pw.Text(
+                        dataSelected["details"][i]["no_mobil"].toString(),
                         textAlign: pw.TextAlign.center,
                         style: pw.TextStyle(fontSize: 8),
                       ),
@@ -520,206 +637,85 @@ class LaporanRekapState extends State<LaporanRekap> {
                     pw.Container(
                       padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
                       child: pw.Text(
-                        "Deskripsi",
+                        dataSelected["details"][i]["keterangan"].toString(),
                         textAlign: pw.TextAlign.left,
                         style: pw.TextStyle(fontSize: 8),
                       ),
                     ),
                     pw.Container(
-                      padding: pw.EdgeInsets.symmetric(vertical: 4),
+                      padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
                       child: pw.Text(
-                        "Satuan",
+                        dataSelected["details"][i]["timestamp"].toString(),
                         textAlign: pw.TextAlign.center,
                         style: pw.TextStyle(fontSize: 8),
                       ),
                     ),
-                  ]),
-                  for (var i = 0; i < dataSelected["detail"].length; i++)
-                    pw.TableRow(
-                      children: [
-                        pw.Container(
-                          padding: pw.EdgeInsets.only(top: 3),
-                          alignment: pw.Alignment.center,
-                          child: pw.Text(
-                            (i + 1).toString(),
-                            style: pw.TextStyle(fontSize: 8),
-                          ),
-                        ),
-                        pw.Container(
-                          padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
-                          child: pw.Text(
-                            dataSelected["detail"][i]["TXZ01"].toString(),
-                            textAlign: pw.TextAlign.left,
-                            style: pw.TextStyle(fontSize: 8),
-                          ),
-                        ),
-                        pw.Container(
-                          padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
-                          child: pw.Text(
-                            dataSelected["detail"][i]["MEINS"].toString(),
-                            textAlign: pw.TextAlign.center,
-                            style: pw.TextStyle(fontSize: 8),
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
-              pw.SizedBox(height: 10),
-              pw.Table(
-                border: pw.TableBorder.all(width: 1),
-                children: [
-                  pw.TableRow(children: [
-                    pw.Container(
-                      padding: pw.EdgeInsets.symmetric(vertical: 4),
-                      child: pw.Text(
-                        "No",
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(fontSize: 8),
-                      ),
-                    ),
-                    pw.Container(
-                      padding: pw.EdgeInsets.symmetric(vertical: 4),
-                      child: pw.Text(
-                        "No Doc",
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(fontSize: 8),
-                      ),
-                    ),
-                    pw.Container(
-                      padding: pw.EdgeInsets.symmetric(vertical: 4),
-                      child: pw.Text(
-                        "No Mobil",
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(fontSize: 8),
-                      ),
-                    ),
-                    pw.Container(
-                      padding: pw.EdgeInsets.symmetric(vertical: 4),
-                      child: pw.Text(
-                        "Ket",
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(fontSize: 8),
-                      ),
-                    ),
-                    pw.Container(
-                      padding: pw.EdgeInsets.symmetric(vertical: 4),
-                      child: pw.Text(
-                        "Tgl Penerimaan Barang",
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(fontSize: 8),
-                      ),
-                    ),
-                  ]),
-                  for (var i = 0; i < dataSelected["details"].length; i++)
-                    pw.TableRow(
-                      children: [
-                        pw.Container(
-                          padding: pw.EdgeInsets.only(top: 3),
-                          alignment: pw.Alignment.center,
-                          child: pw.Text(
-                            (i + 1).toString(),
-                            style: pw.TextStyle(fontSize: 8),
-                          ),
-                        ),
-                        pw.Container(
-                          padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
-                          child: pw.Text(
-                            dataSelected["details"][i]["no_doc"].toString(),
-                            textAlign: pw.TextAlign.left,
-                            style: pw.TextStyle(fontSize: 8),
-                          ),
-                        ),
-                        pw.Container(
-                          padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
-                          child: pw.Text(
-                            dataSelected["details"][i]["no_mobil"].toString(),
-                            textAlign: pw.TextAlign.center,
-                            style: pw.TextStyle(fontSize: 8),
-                          ),
-                        ),
-                        pw.Container(
-                          padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
-                          child: pw.Text(
-                            dataSelected["details"][i]["keterangan"].toString(),
-                            textAlign: pw.TextAlign.left,
-                            style: pw.TextStyle(fontSize: 8),
-                          ),
-                        ),
-                        pw.Container(
-                          padding: pw.EdgeInsets.symmetric(vertical: 4, horizontal: 3),
-                          child: pw.Text(
-                            dataSelected["details"][i]["timestamp"].toString(),
-                            textAlign: pw.TextAlign.center,
-                            style: pw.TextStyle(fontSize: 8),
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
-              pw.SizedBox(height: 30),
-              pw.Row(children: [
-                pw.Text(
-                  "   Pemeriksa Barang",
-                  textAlign: pw.TextAlign.left,
-                  style: pw.TextStyle(fontSize: 8),
+                  ],
                 ),
-                pw.Spacer(),
-                pw.Text(
-                  "Penerima Barang       ",
-                  textAlign: pw.TextAlign.left,
-                  style: pw.TextStyle(fontSize: 8),
-                ),
-              ]),
-              pw.SizedBox(height: 80),
-              pw.Row(children: [
-                pw.Text(
-                  "(....................................)",
-                  textAlign: pw.TextAlign.left,
-                  style: pw.TextStyle(fontSize: 8),
-                ),
-                pw.Spacer(),
-                pw.Text(
-                  "(....................................)",
-                  textAlign: pw.TextAlign.left,
-                  style: pw.TextStyle(fontSize: 8),
-                ),
-              ]),
-              pw.SizedBox(height: 20),
-              pw.Divider(),
-              pw.Text(
-                "NOTE : ",
-                textAlign: pw.TextAlign.left,
-                style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, fontStyle: pw.FontStyle.italic),
-              ),
-              pw.Row(children: [
-                pw.Text(
-                  "Pemeriksa Barang :",
-                  textAlign: pw.TextAlign.left,
-                  style: pw.TextStyle(fontSize: 8, fontStyle: pw.FontStyle.italic),
-                ),
-                pw.Text(
-                  "di isi dengan ttd penerima barang secara system SAP, admin / pic gudang bahan baku.",
-                  textAlign: pw.TextAlign.left,
-                  style: pw.TextStyle(fontSize: 8, fontStyle: pw.FontStyle.italic),
-                ),
-              ]),
-              pw.Row(children: [
-                pw.Text(
-                  "Penerima Barang :",
-                  textAlign: pw.TextAlign.left,
-                  style: pw.TextStyle(fontSize: 8, fontStyle: pw.FontStyle.italic),
-                ),
-                pw.Text(
-                  "di isi dengan ttd penerima barang secara fisik, pic lapangan yang menginput transaski di aplikasi.",
-                  textAlign: pw.TextAlign.left,
-                  style: pw.TextStyle(fontSize: 8, fontStyle: pw.FontStyle.italic),
-                ),
-              ]),
             ],
           ),
-        ),
+          pw.SizedBox(height: 30),
+          pw.Row(children: [
+            pw.Text(
+              "   Pemeriksa Barang",
+              textAlign: pw.TextAlign.left,
+              style: pw.TextStyle(fontSize: 8),
+            ),
+            pw.Spacer(),
+            pw.Text(
+              "Penerima Barang       ",
+              textAlign: pw.TextAlign.left,
+              style: pw.TextStyle(fontSize: 8),
+            ),
+          ]),
+          pw.SizedBox(height: 80),
+          pw.Row(children: [
+            pw.Text(
+              "(....................................)",
+              textAlign: pw.TextAlign.left,
+              style: pw.TextStyle(fontSize: 8),
+            ),
+            pw.Spacer(),
+            pw.Text(
+              "(....................................)",
+              textAlign: pw.TextAlign.left,
+              style: pw.TextStyle(fontSize: 8),
+            ),
+          ]),
+          pw.SizedBox(height: 20),
+          pw.Divider(),
+          pw.Text(
+            "NOTE : ",
+            textAlign: pw.TextAlign.left,
+            style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, fontStyle: pw.FontStyle.italic),
+          ),
+          pw.Row(children: [
+            pw.Text(
+              "Pemeriksa Barang :",
+              textAlign: pw.TextAlign.left,
+              style: pw.TextStyle(fontSize: 8, fontStyle: pw.FontStyle.italic),
+            ),
+            pw.Text(
+              "di isi dengan ttd penerima barang secara system SAP, admin / pic gudang bahan baku.",
+              textAlign: pw.TextAlign.left,
+              style: pw.TextStyle(fontSize: 8, fontStyle: pw.FontStyle.italic),
+            ),
+          ]),
+          pw.Row(
+            children: [
+              pw.Text(
+                "Penerima Barang :",
+                textAlign: pw.TextAlign.left,
+                style: pw.TextStyle(fontSize: 8, fontStyle: pw.FontStyle.italic),
+              ),
+              pw.Text(
+                "di isi dengan ttd penerima barang secara fisik, pic lapangan yang menginput transaski di aplikasi.",
+                textAlign: pw.TextAlign.left,
+                style: pw.TextStyle(fontSize: 8, fontStyle: pw.FontStyle.italic),
+              ),
+            ],
+          ),
+        ],
       ),
     );
 
