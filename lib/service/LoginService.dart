@@ -19,6 +19,8 @@ class LoginService {
         'aplikasi': 'egrproyek',
       };
       await http.post(url, body: obj).then((res) async {
+        print("asdasdasd");
+
         var data = json.decode(res.body), lm = LoginModel.fromJson(data);
         if (res.statusCode == 200) {
           if (lm.success == false) {
@@ -43,7 +45,7 @@ class LoginService {
         return global.errorResponsePop(context, "Koneksi Timeout ...");
       });
     } catch (e) {
-      return 500;
+      return global.errorResponse(context, 'Plant dan Sloc Belum Diatur !');
     }
   }
 
@@ -83,6 +85,7 @@ class LoginService {
       await preference.setString("hak_akses", lm.data!.user!.hakAkses.toString());
       await preference.setString("plant", lm.data!.user!.plant.toString());
       await preference.setString("permission", jsonEncode(lm.data!.user!.permission));
+      await preference.setString("sloc", jsonEncode(lm.data!.user!.sloc));
       //Set Config SAP
       await preference.setString("ashost", lm.data!.user!.setting!.ashost);
       await preference.setString("sysnr", lm.data!.user!.setting!.sysnr);

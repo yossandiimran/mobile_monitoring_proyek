@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_typing_uninitialized_variables, use_key_in_widget_constructors, no_logic_in_create_state, avoid_print, avoid_unnecessary_containers, unnecessary_null_comparison, invalid_use_of_visible_for_testing_member, use_build_context_synchronously, avoid_function_literals_in_foreach_calls
+// ignore_for_file: file_names, prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_typing_uninitialized_variables, use_key_in_widget_constructors, no_logic_in_create_state, avoid_print, avoid_unnecessary_containers, unnecessary_null_comparison, invalid_use_of_visible_for_testing_member, use_build_context_synchronously, avoid_function_literals_in_foreach_calls, prefer_interpolation_to_compose_strings
 part of '../../header.dart';
 
 class MainPenerimaan extends StatefulWidget {
@@ -11,7 +11,7 @@ class MainPenerimaan extends StatefulWidget {
 class MainPenerimaanState extends State<MainPenerimaan> {
   final objParam;
   bool isLoading = true;
-  List plantData = [];
+  List plantData = [], plantDataReal = [];
   var plantIdx = "0", poData = [], poTemp = [], selectedPo;
   var groupedList = {};
   TextEditingController keyword = TextEditingController();
@@ -36,7 +36,7 @@ class MainPenerimaanState extends State<MainPenerimaan> {
         extendBodyBehindAppBar: true,
         appBar: widget.appBarTitle(
           context: context,
-          title: "Penerimaan Barang Proyek",
+          title: objParam["title"].toString(),
           color: Colors.transparent,
         ),
         body: Stack(children: [
@@ -75,21 +75,22 @@ class MainPenerimaanState extends State<MainPenerimaan> {
                           margin: EdgeInsets.only(top: 5),
                           decoration: widget.decCont2(Colors.white, 15, 15, 15, 15),
                           width: global.getWidth(context),
-                          child: Text(preference.getData("plant")),
-                          // child: DropdownButton<String>(
-                          //   value: plantIdx,
-                          //   isExpanded: true,
-                          //   items: widget.getItemsDropdown("plant", plantData),
-                          //   onChanged: (newValue) async {
-                          //     plantIdx = (int.parse(newValue.toString())).toString();
-                          //     setState(() {});
-                          //     poTemp.clear();
-                          //     selectedPo = null;
-                          //     if (newValue.toString() != "0") {
-                          //       await getDataPoService();
-                          //     }
-                          //   },
-                          // ),
+                          // child: Text(preference.getData("sloc")),
+                          child: DropdownButton<String>(
+                            value: plantIdx,
+                            isExpanded: true,
+                            items: widget.getItemsDropdown("plant", plantData),
+                            onChanged: (newValue) async {
+                              plantIdx = (int.parse(newValue.toString())).toString();
+                              setState(() {});
+                              poTemp.clear();
+                              selectedPo = null;
+                              if (newValue.toString() != "0") {
+                                alert.loadingAlert(context: context, text: "Mohon Tunggu", isPop: true);
+                                await getDataPoService();
+                              }
+                            },
+                          ),
                         ),
                         SizedBox(height: 10),
                         Divider(thickness: 3, color: defBlack1),
@@ -241,6 +242,7 @@ class MainPenerimaanState extends State<MainPenerimaan> {
                 },
               ),
               title: Text(key),
+              subtitle: Text("Vendor : " + groupedList[key][0]["NAME1"]),
               children: [
                 Table(
                   columnWidths: const <int, TableColumnWidth>{
@@ -323,21 +325,22 @@ class MainPenerimaanState extends State<MainPenerimaan> {
   }
 
   Future<void> getDataPoService() async {
-    Map objParam = {"FUNCTION": "ZCNTNWRFC2_T020A", "PLANT": "1C00"};
-    // Map objParam = {"FUNCTION": "ZCNTNWRFC2_T020A", "PLANT": plantData[(int.parse(plantIdx) - 1)]["PLANT"]};
+    Map objParam = {"FUNCTION": "ZCNTNWRFC2_T020A", "PLANT": preference.getData("plant")};
+    // Map objParam = {"FUNCTION": "ZCNTNWRFC2_T020A", "PLANT": plantData[(int.parse(plantIdx) - 1)]};
     var rawPos = await SapService(context: context, objParam: objParam).callResponseSap();
 
-    print(rawPos["T_PO"][0]["LGORT"]);
-    print(plantData[(int.parse(plantIdx) - 1)]["PLANT"]);
-    print(rawPos["T_PO"].where((element) => element["LGORT"] == plantData[(int.parse(plantIdx) - 1)]["PLANT"]));
-    var rawPo = rawPos["T_PO"].where((element) => element["LGORT"] == plantData[(int.parse(plantIdx) - 1)]["PLANT"]);
+    var rawPo = rawPos["T_PO"].where((element) => element["LGORT"] == plantData[(int.parse(plantIdx) - 1)]);
+    // if (plantData[(int.parse(plantIdx) - 1)] == '1C46') {
+    // rawPo = rawPos["T_PO"].where((element) => element["LGORT"] == plantData[(int.parse(plantIdx) - 1)]);
+    // }
+    print(rawPo);
     rawPo.toList();
     if (rawPo != []) {
       try {
         if (rawPo != []) {
           List checkAvaliablePo = await LaporanService(
             context: context,
-            objParam: {"plant": plantData[(int.parse(plantIdx) - 1)]["PLANT"]},
+            objParam: {"plant": plantData[(int.parse(plantIdx) - 1)]},
           ).checkAvaliablePo();
           List newPo = rawPo.where((element) => !checkAvaliablePo.contains(element["EBELN"])).toList();
           setState(() {
@@ -364,8 +367,9 @@ class MainPenerimaanState extends State<MainPenerimaan> {
     var rawPlantData = await SapService(context: context, objParam: objParam).callResponseSap();
     if (rawPlantData != null) {
       // preference.getData("plant")
-      plantData = rawPlantData["T_PLANT"];
-      plantIdx = (plantData.indexWhere((element) => element["PLANT"] == preference.getData("plant")) + 1).toString();
+      plantDataReal = rawPlantData["T_PLANT"];
+      plantData = jsonDecode(preference.getData("sloc"));
+      plantIdx = (plantData.indexWhere((element) => element == preference.getData("plant")) + 1).toString();
       await getDataPoService();
       setState(() {});
       Navigator.pop(context);
@@ -380,11 +384,19 @@ class MainPenerimaanState extends State<MainPenerimaan> {
       return alert.alertWarning(context: context, text: "Silahkan pilih po terlebih dahulu !");
     }
 
+    print(plantDataReal);
+    print(plantData);
+    print(plantIdx);
+    print(plantData[int.parse(plantIdx) - 1]);
+
+    var containsPlant = plantDataReal.where((element) => element["PLANT"] == plantData[int.parse(plantIdx) - 1]).first;
     var objectSend = {
       "dataPo": jsonEncode(groupedList[selectedPo]),
       // "lokasi": plantData[(int.parse(plantIdx) - 1)]["PLANT"],
       "lokasi": groupedList[selectedPo][0]["LGORT"],
-      "durasi": plantData[(int.parse(plantIdx) - 1)]["ZHOURS"],
+      // "durasi": plantData[(int.parse(plantIdx) - 1)]["ZHOURS"],
+      "durasi": containsPlant["ZHOURS"],
+      "title": objParam["title"],
     };
     Navigator.pushNamed(context, '/inputPenerimaan', arguments: objectSend);
   }

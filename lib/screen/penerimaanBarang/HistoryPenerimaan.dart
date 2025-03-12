@@ -42,7 +42,7 @@ class HistoryPenerimaanState extends State<HistoryPenerimaan> {
         extendBodyBehindAppBar: true,
         appBar: widget.appBarTitle(
           context: context,
-          title: "History Penerimaan Barang Proyek ",
+          title: "History ${objParam["title"]}",
           color: Colors.transparent,
         ),
         body: Stack(children: [
@@ -194,11 +194,12 @@ class HistoryPenerimaanState extends State<HistoryPenerimaan> {
       createdAt: obj["created_at"],
     );
     await TransaksiService(
-      context: context,
-      objParam: data[0],
-      duration: objParam["durasi"],
-      isDone: data[0]["is_done"],
-    ).createTransaksiService();
+            context: context,
+            objParam: data[0],
+            duration: objParam["durasi"],
+            isDone: data[0]["is_done"],
+            title: objParam["title"])
+        .createTransaksiService();
 
     getHistoryTransaksi();
   }

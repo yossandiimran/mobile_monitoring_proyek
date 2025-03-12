@@ -15,6 +15,8 @@ class CreateRekapState extends State<CreateRekap> {
   TextEditingController cpudt = TextEditingController();
   bool isAll = false;
   var statusIdx = "2";
+  var plantIdx = "0";
+  List plantData = [];
   TextEditingController sloc = TextEditingController(text: "");
   TextEditingController po = TextEditingController(text: "");
   CreateRekapState(this.objParam);
@@ -27,6 +29,8 @@ class CreateRekapState extends State<CreateRekap> {
 
   initData() async {
     sloc.text = preference.getData("plant");
+    plantData = jsonDecode(preference.getData("sloc"));
+    plantIdx = (plantData.indexWhere((element) => element == preference.getData("plant")) + 1).toString();
     setState(() {});
   }
 
@@ -34,7 +38,7 @@ class CreateRekapState extends State<CreateRekap> {
     isLoading = true;
     setState(() {});
     Map objSend = {
-      "sloc": sloc.text,
+      "sloc": plantData[int.parse(plantIdx) - 1],
       "nomer_po": po.text,
       "tgl_awal": cpudt.text,
       "tgl_akhir": cpudt.text,
@@ -42,6 +46,8 @@ class CreateRekapState extends State<CreateRekap> {
     };
     dataListHistory = await LaporanService(context: context, objParam: objSend).getRekapService();
     tempListHistory = dataListHistory;
+
+    print(tempListHistory);
 
     isLoading = false;
     setState(() {});
@@ -102,11 +108,27 @@ class CreateRekapState extends State<CreateRekap> {
                         children: [
                           Spacer(),
                           Container(
-                            padding: EdgeInsets.symmetric(vertical: 23, horizontal: 20),
+                            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                             margin: EdgeInsets.only(top: 5, left: 3, right: 3),
                             decoration: widget.decCont2(Colors.white, 10, 10, 10, 10),
                             width: global.getWidth(context) / 5,
-                            child: Text(sloc.text),
+                            // child: Text(sloc.text),
+                            child: DropdownButton<String>(
+                              value: plantIdx,
+                              isExpanded: true,
+                              items: widget.getItemsDropdown("plant", plantData),
+                              onChanged: (newValue) async {
+                                plantIdx = (int.parse(newValue.toString())).toString();
+                                setState(() {});
+                                if (newValue.toString() != "0") {
+                                  // setState(() {
+                                  //   isLoading = true;
+                                  // });
+                                  // getHistoryTransaksi();
+                                  // await getDataPoService();
+                                }
+                              },
+                            ),
                           ),
                           Spacer(),
                           Container(
@@ -204,6 +226,10 @@ class CreateRekapState extends State<CreateRekap> {
 
   List<Widget> getChildren() {
     var children = <Widget>[];
+    // children.add(Container(
+    //   padding: EdgeInsets.all(5),
+    //   child: Text(tempListHistory.toString()),
+    // ));
     if (tempListHistory.isEmpty) {
       children.add(Container(
         padding: EdgeInsets.all(10),
@@ -229,7 +255,9 @@ class CreateRekapState extends State<CreateRekap> {
                           style: textStyling.styleText5(14, defBlack1),
                         ),
                         subtitle: Text(
-                          "SLOC : " + tempListHistory[i]["plant"].toString(),
+                          "SLOC : " +
+                              tempListHistory[i]["plant"].toString() +
+                              "\nVENDOR : ${tempListHistory[i]["detail"][0]["NAME1"].toString() != "null" ? tempListHistory[i]["detail"][0]["NAME1"].toString() : "-"}",
                           style: textStyling.styleText5(14, defBlack1),
                         ),
                       ),
@@ -486,7 +514,7 @@ class CreateRekapState extends State<CreateRekap> {
     }
 
     Map objSend = {
-      'plant': sloc.text,
+      'plant': plantData[int.parse(plantIdx) - 1],
       'nomer_po': listSend[0]["nomer_po"],
       'keterangan': 'REKAP',
       // 'detail': tempListHistory[0]["detail"],

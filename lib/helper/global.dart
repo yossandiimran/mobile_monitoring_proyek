@@ -12,7 +12,7 @@ CustomWidget widget = CustomWidget();
 TextStyling textStyling = TextStyling();
 FirebaseMessagingHelper fbmessaging = FirebaseMessagingHelper();
 
-var appVersion = '1.3.0';
+var appVersion = '1.4.1';
 final dbHelper = DatabaseHelper.instance;
 //Default Theme Color
 Color defBlue = const Color(0xff1572e8), defRed = const Color(0xffea4d56);
@@ -32,7 +32,7 @@ class Global {
   // var imageUrl = 'http://192.168.1.128/emopb/public/';
 
   // Local Dev 113
-  // var baseUrl = 'http://192.168.1.114/sum-app/public/api/';
+  // var baseUrl = 'http://192.168.1.114:88/user-center/public/api/';
   // var transUrl = 'http://192.168.1.114/emopb/public/api/';
   // var imageUrl = 'http://192.168.1.114/emopb/public/';
 
@@ -78,11 +78,11 @@ class Global {
     alert.alertSuccess(context: context, text: message);
   }
 
-  navigateCheckPermission({context, route, menuCode}) async {
+  navigateCheckPermission({context, route, menuCode, ttl = ""}) async {
     List<dynamic> permissionData = jsonDecode(await preference.getData("permission"));
     var checkMenu = permissionData.where((element) => element == menuCode);
     checkMenu.isNotEmpty
-        ? Navigator.pushNamed(context, route)
+        ? Navigator.pushNamed(context, route, arguments: {"title": ttl})
         : alert.alertWarning(context: context, text: "Anda Tidak Memiliki Akses");
   }
 

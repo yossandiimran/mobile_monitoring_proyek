@@ -43,6 +43,7 @@ part 'screen/Home.dart';
 // ================= Penerimaan Barang Screen ====================
 part 'screen/penerimaanBarang/InputPenerimaan.dart';
 part 'screen/penerimaanBarang/ReverseTransaksi.dart';
+part 'screen/penerimaanBarang/CancelTransaksi.dart';
 part 'screen/penerimaanBarang/MenuPenerimaan.dart';
 part 'screen/penerimaanBarang/HistoryPenerimaan.dart';
 part 'screen/penerimaanBarang/LaporanPenerimaan.dart';

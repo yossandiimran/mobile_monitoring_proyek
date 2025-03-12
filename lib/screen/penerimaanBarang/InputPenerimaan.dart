@@ -39,7 +39,7 @@ class InputPenerimaanState extends State<InputPenerimaan> {
         extendBodyBehindAppBar: true,
         appBar: widget.appBarTitle(
           context: context,
-          title: "Form Penerimaan Barang",
+          title: "Form ${objParam["title"]}",
           color: Colors.transparent,
           action: [
             BadgeIconNotif(
@@ -50,7 +50,8 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                   "durasi": objParam["durasi"],
                   "plant": plant,
                   "noPo": dataPo[0]["EBELN"],
-                  "barang": dataPo[0]["MATNR"]
+                  "barang": dataPo[0]["MATNR"],
+                  "title": objParam["title"],
                 };
                 Navigator.pushNamed(context, '/historyPenerimaan', arguments: obj).then((value) {
                   getNotifBadge();
@@ -84,11 +85,6 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                       child: Column(
                         children: [
                           Container(
-                            margin: EdgeInsets.only(left: 10, right: 10),
-                            alignment: Alignment.bottomLeft,
-                            child: Text("  Informasi :", textAlign: TextAlign.left),
-                          ),
-                          Container(
                             padding: EdgeInsets.symmetric(vertical: 6, horizontal: 0),
                             margin: EdgeInsets.only(top: 5, left: 10, right: 10),
                             decoration: widget.decCont2(Colors.white, 15, 15, 15, 15),
@@ -96,7 +92,8 @@ class InputPenerimaanState extends State<InputPenerimaan> {
                             child: Column(children: [
                               ListTile(
                                 leading: Icon(Icons.receipt_long_rounded, color: defPurple, size: 40),
-                                title: Text("Lokasi   : $plant\nPO          : " + dataPo[0]["EBELN"]),
+                                title: Text(
+                                    "Lokasi   : $plant\nPO          : ${dataPo[0]["EBELN"]}\nVendor : ${dataPo[0]["NAME1"]}"),
                               ),
                               Divider(color: defBlack1, thickness: 3),
                               for (var i = 0; i < dataPo.length; i++)
@@ -411,7 +408,8 @@ class InputPenerimaanState extends State<InputPenerimaan> {
         "durasi": objParam["durasi"],
         "plant": plant,
         "noPo": dataPo[0]["EBELN"],
-        "barang": dataPo[0]["MATNR"]
+        "barang": dataPo[0]["MATNR"],
+        "title": objParam["title"],
       };
       Navigator.pushNamed(context, '/historyPenerimaan', arguments: obj).then((value) {
         getNotifBadge();

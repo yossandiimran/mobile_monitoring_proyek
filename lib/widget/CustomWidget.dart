@@ -164,7 +164,7 @@ class CustomWidget {
         } else if (routeName == "/rekapPenerimaan") {
           getChoiceMenuBarcode(context, menuCode, routeName);
         } else {
-          global.navigateCheckPermission(context: context, route: routeName, menuCode: menuCode);
+          global.navigateCheckPermission(context: context, route: routeName, menuCode: menuCode, ttl: title);
         }
       },
       child: Container(
@@ -457,13 +457,13 @@ class CustomWidget {
   getItemsDropdown(selection, data) {
     List<DropdownMenuItem<String>> widget = [];
     if (selection == "plant") {
-      widget.add(DropdownMenuItem(value: "0", child: Text("Plant / Lokasi", style: textStyling.styleText4(13))));
+      widget.add(DropdownMenuItem(value: "0", child: Text("Plant/Sloc", style: textStyling.styleText4(13))));
       if (data != null) {
         for (var i = 0; i < data.length; i++) {
           widget.add(
             DropdownMenuItem(
               value: (i + 1).toString(),
-              child: Text(data[i]["PLANT"], style: textStyling.styleText4(13)),
+              child: Text(data[i], style: textStyling.styleText4(13)),
             ),
           );
         }

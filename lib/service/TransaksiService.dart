@@ -6,8 +6,9 @@ class TransaksiService {
   final objParam;
   final duration;
   final isDone;
+  final title;
 
-  TransaksiService({required this.context, this.objParam, this.duration, this.isDone = "0"});
+  TransaksiService({required this.context, this.objParam, this.duration, this.isDone = "0", this.title = ""});
 
   Future createTransaksiService() async {
     alert.loadingAlert(context: context, text: "Mohon Tunggu .. ", isPop: false);
@@ -50,9 +51,13 @@ class TransaksiService {
             Navigator.pop(context);
             Navigator.pop(context);
           } else {
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.pop(context);
+            if (title == "Penerimaan Barang Urugan") {
+              Navigator.pop(context);
+            } else {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+            }
           }
           global.successResponsePop(context, "Data Berhasil Disimpan");
           await dbHelper.updateStatusTransaksi(
@@ -128,6 +133,29 @@ class TransaksiService {
     var dataReturn;
     try {
       var url = global.getTrxServiceUrl("transaksi/reverseNoDoc");
+      var header = {'authorization': 'Bearer ' + preference.getData('token')};
+      await http.post(url, headers: header, body: objParam).then((res) async {
+        var data = json.decode(res.body);
+        if (data["success"] == 'false') {
+          if (data["message" == "Unauthenticated."]) {
+            global.checkResponseStatus(context, res, data);
+          }
+          return global.errorResponsePop(context, data["message"]);
+        }
+        dataReturn = global.checkResponseStatus(context, res, data);
+      }).timeout(const Duration(seconds: 10), onTimeout: () {
+        return global.errorResponsePop(context, "Koneksi Timeout ...");
+      });
+    } catch (e) {
+      return global.errorResponsePop(context, e.toString());
+    }
+    return dataReturn;
+  }
+
+  Future reverseTransaction() async {
+    var dataReturn;
+    try {
+      var url = global.getTrxServiceUrl("transaksi/cancelTransaction");
       var header = {'authorization': 'Bearer ' + preference.getData('token')};
       await http.post(url, headers: header, body: objParam).then((res) async {
         var data = json.decode(res.body);

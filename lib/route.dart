@@ -13,7 +13,7 @@ class RouteGenerator {
       case '/home':
         return MaterialPageRoute(builder: (_) => Home());
       case '/mainPenerimaan':
-        return MaterialPageRoute(builder: (_) => MainPenerimaan());
+        return MaterialPageRoute(builder: (_) => MainPenerimaan(objParam: settings.arguments));
       case '/inputPenerimaan':
         return MaterialPageRoute(builder: (_) => InputPenerimaan(objParam: settings.arguments));
       case '/historyPenerimaan':
@@ -26,6 +26,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => CreateRekap());
       case '/reverseNomorDoc':
         return MaterialPageRoute(builder: (_) => ReverseTransaksi());
+      case '/cancelTransaksi':
+        return MaterialPageRoute(builder: (_) => CancelTransaksi());
 
       default:
         return _errorRoute();

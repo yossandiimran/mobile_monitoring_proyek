@@ -11,25 +11,32 @@ class LaporanPenerimaan extends StatefulWidget {
 class LaporanPenerimaanState extends State<LaporanPenerimaan> {
   final objParam;
   var dataListHistory = [], tempListHistory = [], isLoading = true, groupedList = {};
+  List plantData = [];
   var statusIdx = "2";
+  var plantIdx = "0";
   TextEditingController sloc = TextEditingController(text: "");
   LaporanPenerimaanState(this.objParam);
 
   @override
   void initState() {
-    getHistoryTransaksi();
+    getHistoryTransaksi(init: true);
     super.initState();
   }
 
-  getHistoryTransaksi() async {
+  getHistoryTransaksi({init = false}) async {
+    plantData = jsonDecode(preference.getData("sloc"));
+    if (init) {
+      plantIdx = (plantData.indexWhere((element) => element == preference.getData("plant")) + 1).toString();
+    }
     sloc.text = preference.getData("plant");
     Map objSend = {
-      "sloc": sloc.text,
+      "sloc": plantData[int.parse(plantIdx) - 1],
       "is_done": statusIdx,
     };
+
+    print(objSend);
     dataListHistory = await LaporanService(context: context, objParam: objSend).getLaporanService();
     tempListHistory = dataListHistory;
-    print(tempListHistory);
     isLoading = false;
     setState(() {});
   }
@@ -47,6 +54,7 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
         appBar: widget.appBarTitle(
             context: context,
             title: "Report Penerimaan Barang Proyek ",
+            // title: preference.getData("hak_akses"),
             color: Colors.transparent,
             action: [
               IconButton(
@@ -86,20 +94,36 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
                             margin: EdgeInsets.only(top: 5, left: 3, right: 3),
                             decoration: widget.decCont2(Colors.white, 15, 15, 15, 15),
                             width: global.getWidth(context) / 2.5,
-                            child: TextFormField(
-                              textCapitalization: TextCapitalization.characters,
-                              controller: sloc,
-                              readOnly: true,
-                              enabled: false,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "SLOC ...",
-                                counterText: "",
-                              ),
-                              maxLength: 10,
-                              onChanged: (value) {
-                                getHistoryTransaksi();
+                            // child: TextFormField(
+                            //   textCapitalization: TextCapitalization.characters,
+                            //   controller: sloc,
+                            //   readOnly: true,
+                            //   enabled: false,
+                            //   decoration: InputDecoration(
+                            //     border: InputBorder.none,
+                            //     hintText: "SLOC ...",
+                            //     counterText: "",
+                            //   ),
+                            //   maxLength: 10,
+                            //   onChanged: (value) {
+                            //     getHistoryTransaksi();
+                            //     setState(() {});
+                            //   },
+                            // ),
+                            child: DropdownButton<String>(
+                              value: plantIdx,
+                              isExpanded: true,
+                              items: widget.getItemsDropdown("plant", plantData),
+                              onChanged: (newValue) async {
+                                plantIdx = (int.parse(newValue.toString())).toString();
                                 setState(() {});
+                                if (newValue.toString() != "0") {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  getHistoryTransaksi();
+                                  // await getDataPoService();
+                                }
                               },
                             ),
                           ),
@@ -189,7 +213,12 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
             decoration: widget.decCont2(defWhite, 20, 20, 20, 20),
             child: ExpansionTile(
               title: Text("Nomor PO : " + tempListHistory[i]["nomer_po"].toString()),
-              subtitle: Text("SLOC : " + tempListHistory[i]["plant"].toString()),
+              subtitle: Text(
+                "SLOC : " +
+                    tempListHistory[i]["plant"].toString() +
+                    "\nVENDOR : ${tempListHistory[i]["detail"][0]["NAME1"].toString() != "null" ? tempListHistory[i]["detail"][0]["NAME1"].toString() : "-"}",
+                style: textStyling.styleText5(14, defBlack1),
+              ),
               children: getSubChildren(tempListHistory[i]),
             ),
           ),
@@ -461,20 +490,33 @@ class LaporanPenerimaanState extends State<LaporanPenerimaan> {
                   child: Wrap(children: [
                     GestureDetector(
                       onTap: () async {
-                        if (val["transaksi"][i]["gr"] != "X") {
-                          alert.loadingAlert(context: context, text: "Mohon Tunggu", isPop: false);
-                          Map obj = {"id": val["transaksi"][i]["id"].toString()};
-                          await TransaksiService(context: context, objParam: obj).acceptGr();
-                          global.successResponsePop(context, "Berhasil");
-                          getHistoryTransaksi();
+                        if (preference.getData("hak_akses") != 'pic lapangan') {
+                          if (val["transaksi"][i]["gr"] != "X") {
+                            alert.loadingAlert(context: context, text: "Mohon Tunggu", isPop: false);
+                            Map obj = {"id": val["transaksi"][i]["id"].toString()};
+                            await TransaksiService(context: context, objParam: obj).acceptGr();
+                            global.successResponsePop(context, "Berhasil");
+                            getHistoryTransaksi();
+                          }
+                        } else {
+                          alert.alertWarning(
+                              context: context, text: "Hanya Admin penerimaan SAP yang dapat melakukan proses ini !");
                         }
                       },
                       child: Container(
                         width: 100,
                         padding: EdgeInsets.all(8),
                         margin: EdgeInsets.all(4),
-                        decoration:
-                            widget.decCont2(val["transaksi"][i]["gr"] == "X" ? defGreen : defRed, 10, 10, 10, 10),
+                        decoration: widget.decCont2(
+                            val["transaksi"][i]["gr"] == "X"
+                                ? defGreen
+                                : preference.getData("hak_akses") != 'pic lapangan'
+                                    ? defRed
+                                    : defGrey,
+                            10,
+                            10,
+                            10,
+                            10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [

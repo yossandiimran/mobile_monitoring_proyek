@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_this, file_names
+// ignore_for_file: unnecessary_this, file_names, unnecessary_new
 
 part of '../header.dart';
 
@@ -12,7 +12,7 @@ class LoginModel {
   LoginModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -34,7 +34,7 @@ class Data {
 
   Data.fromJson(Map<String, dynamic> json) {
     accessToken = json['access_token'];
-    user = json['user'] != null ? User.fromJson(json['user']) : null;
+    user = json['user'] != null ? new User.fromJson(json['user']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -55,6 +55,7 @@ class User {
   String? nrp;
   String? pSite;
   String? plant;
+  List<String>? sloc;
   String? hakAkses;
   List<String>? permission;
   Setting? setting;
@@ -67,6 +68,7 @@ class User {
       this.nrp,
       this.pSite,
       this.plant,
+      this.sloc,
       this.hakAkses,
       this.permission,
       this.setting});
@@ -79,9 +81,10 @@ class User {
     nrp = json['nrp'];
     pSite = json['p_site'];
     plant = json['plant'];
+    sloc = json['sloc'].cast<String>();
     hakAkses = json['hak_akses'];
     permission = json['permission'].cast<String>();
-    setting = json['setting'] != null ? Setting.fromJson(json['setting']) : null;
+    setting = json['setting'] != null ? new Setting.fromJson(json['setting']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -93,6 +96,7 @@ class User {
     data['nrp'] = this.nrp;
     data['p_site'] = this.pSite;
     data['plant'] = this.plant;
+    data['sloc'] = this.sloc;
     data['hak_akses'] = this.hakAkses;
     data['permission'] = this.permission;
     if (this.setting != null) {

@@ -75,9 +75,12 @@ class LaporanService {
         "gr": "X",
         "nomer_laporan": objParam["nomer_laporan"],
       };
+      print("========================");
       print(body);
       await http.post(url, headers: header, body: body).then((res) async {
         var data = json.decode(res.body);
+
+        print(data);
         if (data["success"] == 'false') {
           if (data["message" == "Unauthenticated."]) {
             global.checkResponseStatus(context, res, data);
@@ -88,6 +91,7 @@ class LaporanService {
         return global.errorResponsePop(context, "Koneksi Timeout ...");
       });
     } catch (e) {
+      print(e);
       dataReturn = [];
     }
     return dataReturn;
@@ -104,7 +108,7 @@ class LaporanService {
         "plant": objParam["sloc"],
         "tgl_awal": objParam["tgl_awal"],
         "tgl_akhir": objParam["tgl_akhir"],
-        "nomer_po": objParam["nomer_po"],
+        "nomer_po": objParam["nomer_po"]
       };
       print(body);
       await http.post(url, headers: header, body: body).then((res) async {
