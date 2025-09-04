@@ -12,7 +12,7 @@ CustomWidget widget = CustomWidget();
 TextStyling textStyling = TextStyling();
 FirebaseMessagingHelper fbmessaging = FirebaseMessagingHelper();
 
-var appVersion = '1.4.1';
+var appVersion = '1.4.2';
 final dbHelper = DatabaseHelper.instance;
 //Default Theme Color
 Color defBlue = const Color(0xff1572e8), defRed = const Color(0xffea4d56);

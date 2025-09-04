@@ -326,6 +326,7 @@ class MainPenerimaanState extends State<MainPenerimaan> {
 
   Future<void> getDataPoService() async {
     Map objParam = {"FUNCTION": "ZCNTNWRFC2_T020A", "PLANT": preference.getData("plant")};
+    print(objParam);
     // Map objParam = {"FUNCTION": "ZCNTNWRFC2_T020A", "PLANT": plantData[(int.parse(plantIdx) - 1)]};
     var rawPos = await SapService(context: context, objParam: objParam).callResponseSap();
 
